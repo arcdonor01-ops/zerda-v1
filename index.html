@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bug Bounty Hunter Guide - Master the Art of Ethical Hacking</title>
+    <meta name="description" content="Pelajari cara menjadi bug bounty hunter profesional. Panduan lengkap dengan tools, teknik, dan strategi untuk sukses di dunia ethical hacking.">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Core Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.12/typed.min.js"></script>
+    <script src="https://unpkg.com/splitting@1.0.6/dist/splitting.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/splitting@1.0.6/dist/splitting.css">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    
+    <style>
+        /* Import cyberpunk theme */
+        :root {
+            --cyber-dark: #0a0a0a;
+            --cyber-darker: #050505;
+            --cyber-cyan: #00ffff;
+            --cyber-magenta: #ff00ff;
+            --cyber-green: #00ff00;
+            --cyber-orange: #ff6600;
+            --cyber-purple: #8a2be2;
+            --cyber-gray: #333333;
+            --cyber-light-gray: #666666;
+            --cyber-white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier Prime', monospace;
+            background: var(--cyber-dark);
+            color: var(--cyber-white);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        .cyber-nav {
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(15px);
+            border-bottom: 2px solid var(--cyber-cyan);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 15px 0;
+            box-shadow: 0 2px 20px rgba(0, 255, 255, 0.3);
+        }
+
+        .cyber-nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .cyber-nav a {
+            color: var(--cyber-white);
+            text-decoration: none;
+            text-transform: uppercase;
+            font-weight: bold;
+            position: relative;
+            padding: 8px 16px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+
+        .cyber-nav a:hover {
+            color: var(--cyber-cyan);
+            text-shadow: 0 0 15px var(--cyber-cyan);
+            transform: translateY(-2px);
+        }
+
+        .cyber-nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--cyber-cyan);
+            transition: width 0.3s ease;
+        }
+
+        .cyber-nav a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .cyber-hero {
+            background: linear-gradient(135deg, var(--cyber-darker), var(--cyber-dark));
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            padding: 100px 20px 50px;
+        }
+
+        .cyber-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(0,255,255,0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 50%, rgba(255,0,255,0.15) 0%, transparent 50%),
+                url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="%2300ffff" stroke-width="0.5" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            animation: pulse-glow 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse-glow {
+            0% { opacity: 0.3; }
+            100% { opacity: 0.8; }
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 900px;
+            z-index: 2;
+            position: relative;
+        }
+
+        .hero-title {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            background: linear-gradient(45deg, var(--cyber-cyan), var(--cyber-magenta), var(--cyber-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: text-glow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes text-glow {
+            0% { filter: drop-shadow(0 0 10px var(--cyber-cyan)); }
+            100% { filter: drop-shadow(0 0 20px var(--cyber-magenta)) drop-shadow(0 0 30px var(--cyber-cyan)); }
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            margin-bottom: 30px;
+            color: var(--cyber-light-gray);
+            font-weight: 400;
+        }
+
+        .typewriter-container {
+            margin: 40px 0;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--cyber-cyan);
+            border-radius: 10px;
+            font-family: 'Courier Prime', monospace;
+        }
+
+        .typewriter-text {
+            font-size: 1.2rem;
+            color: var(--cyber-green);
+            min-height: 30px;
+        }
+
+        /* Stats Section */
+        .stats-section {
+            padding: 80px 20px;
+            background: linear-gradient(135deg, rgba(0,255,255,0.05), rgba(255,0,255,0.05));
+            position: relative;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .stat-card {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--cyber-cyan);
+            border-radius: 15px;
+            padding: 30px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.3);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cyber-cyan), var(--cyber-magenta), var(--cyber-green));
+            animation: scan-line 2s linear infinite;
+        }
+
+        @keyframes scan-line {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .stat-number {
+            font-family: 'Orbitron', monospace;
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--cyber-cyan);
+            display: block;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px var(--cyber-cyan);
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            color: var(--cyber-white);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-description {
+            font-size: 0.9rem;
+            color: var(--cyber-light-gray);
+            margin-top: 10px;
+        }
+
+        /* Program Analysis Section */
+        .program-analysis {
+            padding: 80px 20px;
+            background: var(--cyber-dark);
+        }
+
+        .section-title {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(2rem, 5vw, 3rem);
+            text-align: center;
+            margin-bottom: 50px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--cyber-cyan);
+            text-shadow: 0 0 20px var(--cyber-cyan);
+        }
+
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+            align-items: start;
+        }
+
+        .analysis-content {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--cyber-magenta);
+            border-radius: 15px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .analysis-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cyber-magenta), var(--cyber-cyan));
+            animation: scan-line 2s linear infinite;
+        }
+
+        .analysis-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            color: var(--cyber-magenta);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .metric-list {
+            list-style: none;
+        }
+
+        .metric-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .metric-item:last-child {
+            border-bottom: none;
+        }
+
+        .metric-label {
+            color: var(--cyber-white);
+            font-weight: bold;
+        }
+
+        .metric-value {
+            color: var(--cyber-cyan);
+            font-weight: bold;
+            font-family: 'Orbitron', monospace;
+        }
+
+        .chart-container {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--cyber-green);
+            border-radius: 15px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cyber-green), var(--cyber-cyan));
+            animation: scan-line 2s linear infinite;
+        }
+
+        .chart-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            color: var(--cyber-green);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        /* Interactive Components */
+        .interactive-section {
+            padding: 80px 20px;
+            background: linear-gradient(135deg, rgba(255,0,255,0.05), rgba(0,255,0,0.05));
+        }
+
+        .components-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .component-card {
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid var(--cyber-purple);
+            border-radius: 15px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            min-height: 400px;
+        }
+
+        .component-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cyber-purple), var(--cyber-cyan));
+            animation: scan-line 2s linear infinite;
+        }
+
+        .component-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.3rem;
+            color: var(--cyber-purple);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        /* Buttons */
+        .cyber-btn {
+            background: linear-gradient(45deg, var(--cyber-cyan), var(--cyber-magenta));
+            border: 2px solid var(--cyber-cyan);
+            color: var(--cyber-dark);
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 15px 30px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            font-family: 'Courier Prime', monospace;
+            font-size: 14px;
+            letter-spacing: 1px;
+            border-radius: 5px;
+            margin: 10px;
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .cyber-btn:hover {
+            background: linear-gradient(45deg, var(--cyber-magenta), var(--cyber-cyan));
+            box-shadow: 0 0 25px var(--cyber-cyan), 0 0 50px var(--cyber-cyan);
+            transform: translateY(-3px);
+        }
+
+        .cyber-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .cyber-btn:hover::before {
+            left: 100%;
+        }
+
+        /* Footer */
+        .cyber-footer {
+            background: var(--cyber-darker);
+            border-top: 2px solid var(--cyber-cyan);
+            padding: 40px 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-text {
+            color: var(--cyber-light-gray);
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .footer-link {
+            color: var(--cyber-cyan);
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: var(--cyber-magenta);
+            text-shadow: 0 0 10px var(--cyber-magenta);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .cyber-nav ul {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .analysis-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            
+            .components-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+            
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+
+        /* Utility Classes */
+        .text-cyan { color: var(--cyber-cyan); }
+        .text-magenta { color: var(--cyber-magenta); }
+        .text-green { color: var(--cyber-green); }
+        .text-orange { color: var(--cyber-orange); }
+        .text-purple { color: var(--cyber-purple); }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--cyber-cyan);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--cyber-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--cyber-cyan);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--cyber-magenta);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="cyber-nav">
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="getting-started.html">Getting Started</a></li>
+            <li><a href="methodology.html">Methodology</a></li>
+            <li><a href="tools.html">Tools</a></li>
+            <li><a href="platforms.html">Platforms</a></li>
+            <li><a href="learning-journey.html">Learning Journey</a></li>
+            <li><a href="community.html">Community</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="cyber-hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Bug Bounty Hunter</h1>
+            <p class="hero-subtitle">Master the Art of Ethical Hacking</p>
+            
+            <div class="typewriter-container">
+                <div class="typewriter-text" id="typewriter"></div>
+            </div>
+            
+            <div style="margin-top: 40px;">
+                <a href="getting-started.html" class="cyber-btn">Start Your Journey</a>
+                <a href="methodology.html" class="cyber-btn">Learn Methodology</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <h2 class="section-title">Bug Bounty Landscape</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-number">$110K+</span>
+                <div class="stat-label">Total Bounties Paid</div>
+                <div class="stat-description">By XVideos program alone</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">98%</span>
+                <div class="stat-label">Response Efficiency</div>
+                <div class="stat-description">Average response time: 9 hours</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">194</span>
+                <div class="stat-label">Reports Resolved</div>
+                <div class="stat-description">Successful vulnerability reports</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-number">$20K</span>
+                <div class="stat-label">Maximum Bounty</div>
+                <div class="stat-description">For critical vulnerabilities</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Program Analysis -->
+    <section class="program-analysis">
+        <h2 class="section-title">HackerOne XVideos Analysis</h2>
+        <div class="analysis-grid">
+            <div class="analysis-content">
+                <h3 class="analysis-title">Program Metrics</h3>
+                <ul class="metric-list">
+                    <li class="metric-item">
+                        <span class="metric-label">Program Launch</span>
+                        <span class="metric-value">August 2021</span>
+                    </li>
+                    <li class="metric-item">
+                        <span class="metric-label">Average Response Time</span>
+                        <span class="metric-value">9 hours</span>
+                    </li>
+                    <li class="metric-item">
+                        <span class="metric-label">Average Triage Time</span>
+                        <span class="metric-value">1 day, 3 hours</span>
+                    </li>
+                    <li class="metric-item">
+                        <span class="metric-label">Average Bounty Time</span>
+                        <span class="metric-value">3 days, 2 hours</span>
+                    </li>
+                    <li class="metric-item">
+                        <span class="metric-label">Hackers Thanked</span>
+                        <span class="metric-value">110</span>
+                    </li>
+                    <li class="metric-item">
+                        <span class="metric-label">Average Bounty</span>
+                        <span class="metric-value">$200</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="chart-container">
+                <h3 class="chart-title">Reward Distribution</h3>
+                <canvas id="rewardChart" width="400" height="300"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Components -->
+    <section class="interactive-section">
+        <h2 class="section-title">Interactive Tools</h2>
+        <div class="components-grid">
+            <!-- Bug Bounty Calculator -->
+            <div class="component-card" id="bountyCalculator">
+                <h3 class="component-title">Bounty Calculator</h3>
+                <form>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; color: var(--cyber-cyan);">Skill Level:</label>
+                        <select name="skill" style="width: 100%; padding: 10px; background: var(--cyber-gray); border: 1px solid var(--cyber-cyan); color: var(--cyber-white); border-radius: 5px;">
+                            <option value="beginner">Beginner</option>
+                            <option value="intermediate">Intermediate</option>
+                            <option value="advanced">Advanced</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; color: var(--cyber-cyan);">Time Commitment (hours/week):</label>
+                        <input type="number" name="time" min="1" max="40" value="10" style="width: 100%; padding: 10px; background: var(--cyber-gray); border: 1px solid var(--cyber-cyan); color: var(--cyber-white); border-radius: 5px;">
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 5px; color: var(--cyber-cyan);">Target Type:</label>
+                        <select name="target" style="width: 100%; padding: 10px; background: var(--cyber-gray); border: 1px solid var(--cyber-cyan); color: var(--cyber-white); border-radius: 5px;">
+                            <option value="web">Web Applications</option>
+                            <option value="mobile">Mobile Apps</option>
+                            <option value="api">APIs</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="cyber-btn" style="width: 100%;">Calculate Potential</button>
+                </form>
+                <div class="result" style="margin-top: 20px;"></div>
+            </div>
+
+            <!-- Learning Path Generator -->
+            <div class="component-card" id="learningPathGenerator">
+                <h3 class="component-title">Learning Path Generator</h3>
+                <form>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; color: var(--cyber-cyan);">Current Level:</label>
+                        <select name="level" style="width: 100%; padding: 10px; background: var(--cyber-gray); border: 1px solid var(--cyber-cyan); color: var(--cyber-white); border-radius: 5px;">
+                            <option value="beginner">Complete Beginner</option>
+                            <option value="intermediate">Some Experience</option>
+                            <option value="advanced">Experienced Developer</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; color: var(--cyber-cyan);">Goals:</label>
+                        <select name="goals" style="width: 100%; padding: 10px; background: var(--cyber-gray); border: 1px solid var(--cyber-cyan); color: var(--cyber-white); border-radius: 5px;">
+                            <option value="money">Earn Money</option>
+                            <option value="skills">Learn Skills</option>
+                            <option value="career">Career Change</option>
+                            <option value="fun">For Fun</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 5px; color: var(--cyber-cyan);">Time Available:</label>
+                        <select name="time" style="width: 100%; padding: 10px; background: var(--cyber-gray); border: 1px solid var(--cyber-cyan); color: var(--cyber-white); border-radius: 5px;">
+                            <option value="casual">Casual (5-10 hrs/week)</option>
+                            <option value="part-time">Part-time (10-20 hrs/week)</option>
+                            <option value="full-time">Full-time (40+ hrs/week)</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="cyber-btn" style="width: 100%;">Generate Path</button>
+                </form>
+                <div class="learning-path" style="margin-top: 20px;"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section style="padding: 80px 20px; text-align: center; background: linear-gradient(135deg, var(--cyber-darker), var(--cyber-dark));">
+        <h2 style="font-family: 'Orbitron', monospace; font-size: 2.5rem; color: var(--cyber-cyan); margin-bottom: 30px; text-transform: uppercase;">
+            Ready to Start Your Journey?
+        </h2>
+        <p style="font-size: 1.2rem; color: var(--cyber-light-gray); margin-bottom: 40px; max-width: 600px; margin-left: auto; margin-right: auto;">
+            Join thousands of ethical hackers making the digital world safer while earning rewards for their skills.
+        </p>
+        <div>
+            <a href="getting-started.html" class="cyber-btn" style="font-size: 1.1rem; padding: 20px 40px;">Begin Your Training</a>
+            <a href="tools.html" class="cyber-btn" style="font-size: 1.1rem; padding: 20px 40px;">Explore Tools</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="cyber-footer">
+        <div class="footer-content">
+            <p class="footer-text">
+                © 2024 Bug Bounty Hunter Guide. Empowering ethical hackers worldwide.
+            </p>
+            <div class="footer-links">
+                <a href="#" class="footer-link">Privacy Policy</a>
+                <a href="#" class="footer-link">Terms of Service</a>
+                <a href="#" class="footer-link">Contact</a>
+                <a href="#" class="footer-link">Resources</a>
+            </div>
+            <p style="font-size: 0.8rem; color: var(--cyber-light-gray); margin-top: 20px;">
+                Always practice responsible disclosure and follow program guidelines.
+            </p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="resources/cyberpunk.js"></script>
+    <script>
+        // Initialize typewriter effect
+        document.addEventListener('DOMContentLoaded', function() {
+            const typewriter = new Typed('#typewriter', {
+                strings: [
+                    'Learn ethical hacking techniques...',
+                    'Master bug bounty methodology...',
+                    'Earn rewards for your skills...',
+                    'Make the internet safer...',
+                    'Join the cybersecurity community...'
+                ],
+                typeSpeed: 50,
+                backSpeed: 30,
+                backDelay: 2000,
+                loop: true,
+                showCursor: true,
+                cursorChar: '_'
+            });
+
+            // Initialize reward chart
+            initRewardChart();
+            
+            // Initialize interactive components
+            initInteractiveComponents();
+        });
+
+        function initRewardChart() {
+            const canvas = document.getElementById('rewardChart');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            const data = [
+                { label: 'Low ($50-200)', value: 48.65, color: '#00ff00' },
+                { label: 'Medium ($200-600)', value: 38.92, color: '#ff6600' },
+                { label: 'High ($1K-3K)', value: 11.35, color: '#00ffff' },
+                { label: 'Critical ($4K-20K)', value: 1.08, color: '#ff00ff' }
+            ];
+            
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = Math.min(centerX, centerY) - 40;
+            
+            let currentAngle = -Math.PI / 2;
+            
+            data.forEach(item => {
+                const sliceAngle = (item.value / 100) * 2 * Math.PI;
+                
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius, currentAngle, currentAngle + sliceAngle);
+                ctx.closePath();
+                
+                ctx.fillStyle = item.color;
+                ctx.fill();
+                
+                // Draw label
+                const labelAngle = currentAngle + sliceAngle / 2;
+                const labelX = centerX + Math.cos(labelAngle) * (radius * 0.7);
+                const labelY = centerY + Math.sin(labelAngle) * (radius * 0.7);
+                
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 12px Courier Prime';
+                ctx.textAlign = 'center';
+                ctx.fillText(item.label.split(' ')[0], labelX, labelY);
+                ctx.fillText(item.value + '%', labelX, labelY + 15);
+                
+                currentAngle += sliceAngle;
+            });
+        }
+
+        function initInteractiveComponents() {
+            // Bug Bounty Calculator
+            const calculator = document.getElementById('bountyCalculator');
+            const form = calculator.querySelector('form');
+            const result = calculator.querySelector('.result');
+            
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const skillLevel = form.querySelector('[name="skill"]').value;
+                const timeCommitment = parseInt(form.querySelector('[name="time"]').value);
+                const targetType = form.querySelector('[name="target"]').value;
+                
+                let baseEarnings = 0;
+                let successRate = 0;
+                
+                switch(skillLevel) {
+                    case 'beginner':
+                        baseEarnings = 200;
+                        successRate = 15;
+                        break;
+                    case 'intermediate':
+                        baseEarnings = 800;
+                        successRate = 35;
+                        break;
+                    case 'advanced':
+                        baseEarnings = 2000;
+                        successRate = 60;
+                        break;
+                }
+                
+                const timeMultiplier = timeCommitment / 10;
+                const targetMultiplier = targetType === 'web' ? 1.2 : targetType === 'api' ? 1.5 : 1.3;
+                
+                const estimatedEarnings = Math.round(baseEarnings * timeMultiplier * targetMultiplier);
+                const estimatedSuccess = Math.min(100, Math.round(successRate * timeMultiplier));
+                
+                result.innerHTML = `
+                    <div style="background: rgba(0, 255, 255, 0.1); border: 1px solid #00ffff; border-radius: 10px; padding: 20px; margin-top: 20px;">
+                        <h3 style="color: #00ffff; margin-bottom: 15px; font-family: 'Orbitron', monospace;">Estimated Results</h3>
+                        <p style="margin-bottom: 10px;"><strong>Monthly Earnings:</strong> <span style="color: #00ff00; font-weight: bold;">$${estimatedEarnings}</span></p>
+                        <p style="margin-bottom: 10px;"><strong>Success Rate:</strong> <span style="color: #ff00ff; font-weight: bold;">${estimatedSuccess}%</span></p>
+                        <p><strong>Recommendation:</strong> ${getRecommendation(skillLevel, estimatedSuccess)}</p>
+                    </div>
+                `;
+            });
+
+            // Learning Path Generator
+            const pathGenerator = document.getElementById('learningPathGenerator');
+            const pathForm = pathGenerator.querySelector('form');
+            const pathResult = pathGenerator.querySelector('.learning-path');
+            
+            pathForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const currentLevel = pathForm.querySelector('[name="level"]').value;
+                const goals = pathForm.querySelector('[name="goals"]').value;
+                const timeAvailable = pathForm.querySelector('[name="time"]').value;
+                
+                const path = generateLearningPath(currentLevel, goals, timeAvailable);
+                
+                pathResult.innerHTML = `
+                    <div style="background: rgba(255, 0, 255, 0.1); border: 1px solid #ff00ff; border-radius: 10px; padding: 20px; margin-top: 20px;">
+                        <h3 style="color: #ff00ff; margin-bottom: 20px; font-family: 'Orbitron', monospace;">Your Personalized Learning Path</h3>
+                        ${path.map((step, index) => `
+                            <div style="margin: 20px 0; padding: 15px; border-left: 3px solid #00ffff; background: rgba(0, 255, 255, 0.1);">
+                                <h4 style="color: #00ffff; margin-bottom: 10px;">Step ${index + 1}: ${step.title}</h4>
+                                <p style="margin-bottom: 10px;">${step.description}</p>
+                                <div style="color: #ff00ff; font-size: 0.9em; font-weight: bold;">Duration: ${step.duration}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            });
+        }
+
+        function getRecommendation(skill, success) {
+            if (success < 20) {
+                return 'Focus on learning basic vulnerabilities and practice on VDP programs first.';
+            } else if (success < 40) {
+                return 'Good progress! Consider joining HackerOne or Bugcrowd for better opportunities.';
+            } else {
+                return 'Excellent! You\'re ready for advanced bug bounty programs and private invites.';
+            }
+        }
+
+        function generateLearningPath(level, goals, time) {
+            const paths = {
+                beginner: [
+                    {
+                        title: 'Web Security Fundamentals',
+                        description: 'Learn HTTP/HTTPS, HTML, JavaScript basics and OWASP Top 10',
+                        duration: '2-3 weeks'
+                    },
+                    {
+                        title: 'Tools Setup & Practice',
+                        description: 'Install and configure Burp Suite, Nmap, and practice labs',
+                        duration: '1-2 weeks'
+                    },
+                    {
+                        title: 'First Bug Bounty Program',
+                        description: 'Start with VDP programs or beginner-friendly platforms',
+                        duration: '2-4 weeks'
+                    }
+                ],
+                intermediate: [
+                    {
+                        title: 'Advanced Vulnerabilities',
+                        description: 'Deep dive into business logic flaws, SSRF, and advanced XSS',
+                        duration: '3-4 weeks'
+                    },
+                    {
+                        title: 'Automation & Scripting',
+                        description: 'Learn Python for custom tools and automation',
+                        duration: '2-3 weeks'
+                    },
+                    {
+                        title: 'Platform Strategy',
+                        description: 'Optimize your approach for HackerOne and Bugcrowd',
+                        duration: '2-3 weeks'
+                    }
+                ],
+                advanced: [
+                    {
+                        title: 'Zero-Day Research',
+                        description: 'Focus on finding novel vulnerabilities and techniques',
+                        duration: '4-6 weeks'
+                    },
+                    {
+                        title: 'Private Programs',
+                        description: 'Build reputation for exclusive private bug bounty invites',
+                        duration: '3-4 weeks'
+                    },
+                    {
+                        title: 'Mentoring & Community',
+                        description: 'Give back to community and build your brand',
+                        duration: 'Ongoing'
+                    }
+                ]
+            };
+            
+            return paths[level] || paths.beginner;
+        }
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Getting Started - Bug Bounty Hunter Guide</title>
+    <meta name="description" content="Panduan lengkap untuk memulai bug bounty hunting. Pelajari fundamental, setup tools, dan langkah pertama untuk menjadi ethical hacker.">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Core Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.12/typed.min.js"></script>
+    <script src="https://unpkg.com/splitting@1.0.6/dist/splitting.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/splitting@1.0.6/dist/splitting.css">
+    
+    <style>
+        /* Import cyberpunk theme */
+        :root {
+            --cyber-dark: #0a0a0a;
+            --cyber-darker: #050505;
+            --cyber-cyan: #00ffff;
+            --cyber-magenta: #ff00ff;
+            --cyber-green: #00ff00;
+            --cyber-orange: #ff6600;
+            --cyber-purple: #8a2be2;
+            --cyber-gray: #333333;
+            --cyber-light-gray: #666666;
+            --cyber-white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier Prime', monospace;
+            background: var(--cyber-dark);
+            color: var(--cyber-white);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        .cyber-nav {
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(15px);
+            border-bottom: 2px solid var(--cyber-cyan);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 15px 0;
+            box-shadow: 0 2px 20px rgba(0, 255, 255, 0.3);
+        }
+
+        .cyber-nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .cyber-nav a {
+            color: var(--cyber-white);
+            text-decoration: none;
+            text-transform: uppercase;
+            font-weight: bold;
+            position: relative;
+            padding: 8px 16px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+
+        .cyber-nav a:hover, .cyber-nav a.active {
+            color: var(--cyber-cyan);
+            text-shadow: 0 0 15px var(--cyber-cyan);
+            transform: translateY(-2px);
+        }
+
+        .cyber-nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--cyber-cyan);
+            transition: width 0.3s ease;
+        }
+
+        .cyber-nav a:hover::after, .cyber-nav a.active::after {
+            width: 100%;
+        }
+
+        /* Header */
+        .page-header {
+            background: linear-gradient(135deg, var(--cyber-darker), var(--cyber-dark));
+            padding: 120px 20px 60px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 30% 40%, rgba(0,255,255,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 70% 60%, rgba(255,0,255,0.1) 0%, transparent 50%);
+        }
+
+        .page-title {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 900;
+            color: var(--cyber-cyan);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px var(--cyber-cyan);
+            position: relative;
+            z-index: 2;
+        }
+
+        .page-subtitle {
+            font-size: clamp(1rem, 3vw, 1.3rem);
+            color: var(--cyber-light-gray);
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 60px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .content-section {
+            margin-bottom: 80px;
+        }
+
+        .section-title {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            color: var(--cyber-cyan);
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 20px var(--cyber-cyan);
+        }
+
+        .cyber-card {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--cyber-cyan);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .cyber-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 255, 255, 0.2);
+        }
+
+        .cyber-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cyber-cyan), var(--cyber-magenta), var(--cyber-cyan));
+            animation: scan-line 2s linear infinite;
+        }
+
+        @keyframes scan-line {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .card-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.4rem;
+            color: var(--cyber-magenta);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .card-content {
+            color: var(--cyber-white);
+            line-height: 1.8;
+        }
+
+        /* Skills Grid */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .skill-item {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--cyber-magenta);
+            border-radius: 10px;
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skill-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--cyber-magenta);
+            animation: scan-line 2s linear infinite;
+        }
+
+        .skill-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.2rem;
+            color: var(--cyber-magenta);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .skill-description {
+            color: var(--cyber-light-gray);
+            margin-bottom: 15px;
+        }
+
+        .skill-importance {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .importance-label {
+            color: var(--cyber-cyan);
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .importance-bar {
+            flex: 1;
+            height: 8px;
+            background: var(--cyber-gray);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .importance-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--cyber-cyan), var(--cyber-magenta));
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+
+        /* Tools Setup */
+        .tools-setup {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .tool-card {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--cyber-green);
+            border-radius: 15px;
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cyber-green), var(--cyber-cyan));
+            animation: scan-line 2s linear infinite;
+        }
+
+        .tool-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .tool-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--cyber-green);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--cyber-dark);
+            font-weight: bold;
+        }
+
+        .tool-name {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.3rem;
+            color: var(--cyber-green);
+            text-transform: uppercase;
+        }
+
+        .tool-description {
+            color: var(--cyber-light-gray);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .tool-features {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .tool-features li {
+            color: var(--cyber-white);
+            margin-bottom: 8px;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .tool-features li::before {
+            content: '▶';
+            color: var(--cyber-cyan);
+            position: absolute;
+            left: 0;
+        }
+
+        .install-btn {
+            background: linear-gradient(45deg, var(--cyber-green), var(--cyber-cyan));
+            border: none;
+            color: var(--cyber-dark);
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 12px 24px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-family: 'Courier Prime', monospace;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .install-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 0, 0.3);
+        }
+
+        /* Learning Path */
+        .learning-path {
+            position: relative;
+            padding: 40px 0;
+        }
+
+        .path-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--cyber-cyan), var(--cyber-magenta));
+            transform: translateX(-50%);
+        }
+
+        .path-step {
+            display: flex;
+            align-items: center;
+            margin: 40px 0;
+            position: relative;
+        }
+
+        .path-step:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        .step-content {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--cyber-cyan);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 0 40px;
+            position: relative;
+        }
+
+        .step-number {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: var(--cyber-magenta);
+            border: 4px solid var(--cyber-cyan);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--cyber-dark);
+            z-index: 10;
+        }
+
+        .step-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.3rem;
+            color: var(--cyber-cyan);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .step-description {
+            color: var(--cyber-light-gray);
+            margin-bottom: 15px;
+        }
+
+        .step-duration {
+            color: var(--cyber-magenta);
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        /* Terminal */
+        .terminal {
+            background: var(--cyber-darker);
+            border: 2px solid var(--cyber-cyan);
+            border-radius: 10px;
+            padding: 20px;
+            font-family: 'Courier Prime', monospace;
+            margin: 30px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .terminal::before {
+            content: '$ ';
+            color: var(--cyber-green);
+            font-weight: bold;
+        }
+
+        .terminal-header {
+            background: var(--cyber-gray);
+            padding: 10px 20px;
+            margin: -20px -20px 20px;
+            border-bottom: 1px solid var(--cyber-cyan);
+            font-size: 0.9rem;
+            color: var(--cyber-cyan);
+        }
+
+        .terminal-content {
+            color: var(--cyber-white);
+            line-height: 1.5;
+        }
+
+        .terminal-cursor {
+            display: inline-block;
+            width: 10px;
+            height: 20px;
+            background: var(--cyber-cyan);
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        /* Buttons */
+        .cyber-btn {
+            background: linear-gradient(45deg, var(--cyber-cyan), var(--cyber-magenta));
+            border: 2px solid var(--cyber-cyan);
+            color: var(--cyber-dark);
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 15px 30px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            font-family: 'Courier Prime', monospace;
+            font-size: 14px;
+            letter-spacing: 1px;
+            border-radius: 5px;
+            margin: 10px;
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .cyber-btn:hover {
+            background: linear-gradient(45deg, var(--cyber-magenta), var(--cyber-cyan));
+            box-shadow: 0 0 25px var(--cyber-cyan), 0 0 50px var(--cyber-cyan);
+            transform: translateY(-3px);
+        }
+
+        .cyber-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .cyber-btn:hover::before {
+            left: 100%;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .cyber-nav ul {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .skills-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .tools-setup {
+                grid-template-columns: 1fr;
+            }
+            
+            .path-step {
+                flex-direction: column !important;
+                text-align: center;
+            }
+            
+            .step-content {
+                margin: 20px 0;
+            }
+            
+            .path-line {
+                display: none;
+            }
+        }
+
+        /* Utility Classes */
+        .text-cyan { color: var(--cyber-cyan); }
+        .text-magenta { color: var(--cyber-magenta); }
+        .text-green { color: var(--cyber-green); }
+        .text-orange { color: var(--cyber-orange); }
+        .text-purple { color: var(--cyber-purple); }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--cyber-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--cyber-cyan);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--cyber-magenta);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="cyber-nav">
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="getting-started.html" class="active">Getting Started</a></li>
+            <li><a href="methodology.html">Methodology</a></li>
+            <li><a href="tools.html">Tools</a></li>
+            <li><a href="platforms.html">Platforms</a></li>
+            <li><a href="learning-journey.html">Learning Journey</a></li>
+            <li><a href="community.html">Community</a></li>
+        </ul>
+    </nav>
+
+    <!-- Header -->
+    <header class="page-header">
+        <h1 class="page-title">Getting Started</h1>
+        <p class="page-subtitle">
+            Your comprehensive guide to beginning your bug bounty hunting journey. 
+            Learn the fundamentals, set up your tools, and take your first steps into ethical hacking.
+        </p>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Introduction Section -->
+        <section class="content-section">
+            <h2 class="section-title">What is Bug Bounty Hunting?</h2>
+            <div class="cyber-card">
+                <h3 class="card-title">The World of Ethical Hacking</h3>
+                <div class="card-content">
+                    <p>Bug bounty hunting adalah praktik menemukan dan melaporkan kerentanan keamanan dalam aplikasi, website, atau sistem kepada organisasi yang bersangkutan. Sebagai imbalannya, Anda mendapatkan reward berupa uang (bounty) untuk temuan Anda.</p>
+                    
+                    <p style="margin-top: 20px;">Ini adalah cara yang menarik untuk:</p>
+                    <ul style="margin: 15px 0; padding-left: 20px;">
+                        <li><span class="text-cyan">Menghasilkan penghasilan sampingan</span> - Beberapa hunter mendapatkan ribuan dollar per bulan</li>
+                        <li><span class="text-magenta">Mengembangkan skill cybersecurity</span> - Belajar dari praktik nyata</li>
+                        <li><span class="text-green">Membangun reputasi</span> - Nama Anda di Hall of Fame perusahaan besar</li>
+                        <li><span class="text-orange">Berkontribusi pada keamanan digital</span> - Membuat internet lebih aman</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Essential Skills -->
+        <section class="content-section">
+            <h2 class="section-title">Essential Skills for Beginners</h2>
+            <p style="text-align: center; color: var(--cyber-light-gray); margin-bottom: 40px;">
+                Before diving into bug bounty hunting, you need to master these fundamental skills:
+            </p>
+            
+            <div class="skills-grid">
+                <div class="skill-item">
+                    <h3 class="skill-title">HTTP/HTTPS Protocol</h3>
+                    <p class="skill-description">Understanding how web communication works is fundamental to finding web vulnerabilities.</p>
+                    <div class="skill-importance">
+                        <span class="importance-label">Importance:</span>
+                        <div class="importance-bar">
+                            <div class="importance-fill" style="width: 95%;"></div>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.9rem; color: var(--cyber-cyan);">Learn: Request/Response, Headers, Methods, Status Codes</p>
+                </div>
+
+                <div class="skill-item">
+                    <h3 class="skill-title">HTML & JavaScript</h3>
+                    <p class="skill-description">Front-end technologies are essential for understanding client-side vulnerabilities.</p>
+                    <div class="skill-importance">
+                        <span class="importance-label">Importance:</span>
+                        <div class="importance-bar">
+                            <div class="importance-fill" style="width: 85%;"></div>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.9rem; color: var(--cyber-cyan);">Focus: DOM manipulation, Event handling, XSS vectors</p>
+                </div>
+
+                <div class="skill-item">
+                    <h3 class="skill-title">OWASP Top 10</h3>
+                    <p class="skill-description">The most critical web application security risks every hunter should know.</p>
+                    <div class="skill-importance">
+                        <span class="importance-label">Importance:</span>
+                        <div class="importance-bar">
+                            <div class="importance-fill" style="width: 90%;"></div>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.9rem; color: var(--cyber-cyan);">Master: XSS, SQL Injection, IDOR, CSRF, RCE</p>
+                </div>
+
+                <div class="skill-item">
+                    <h3 class="skill-title">Linux Command Line</h3>
+                    <p class="skill-description">Most security tools run on Linux, so command line proficiency is crucial.</p>
+                    <div class="skill-importance">
+                        <span class="importance-label">Importance:</span>
+                        <div class="importance-bar">
+                            <div class="importance-fill" style="width: 75%;"></div>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.9rem; color: var(--cyber-cyan);">Practice: File operations, Text processing, Network tools</p>
+                </div>
+
+                <div class="skill-item">
+                    <h3 class="skill-title">Programming Basics</h3>
+                    <p class="skill-description">Python is the most popular language for security scripting and automation.</p>
+                    <div class="skill-importance">
+                        <span class="importance-label">Importance:</span>
+                        <div class="importance-bar">
+                            <div class="importance-fill" style="width: 70%;"></div>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.9rem; color: var(--cyber-cyan);">Start with: Variables, Functions, HTTP libraries, Regex</p>
+                </div>
+
+                <div class="skill-item">
+                    <h3 class="skill-title">Networking Fundamentals</h3>
+                    <p class="skill-description">Understanding TCP/IP, DNS, and network protocols helps in reconnaissance.</p>
+                    <div class="skill-importance">
+                        <span class="importance-label">Importance:</span>
+                        <div class="importance-bar">
+                            <div class="importance-fill" style="width: 65%;"></div>
+                        </div>
+                    </div>
+                    <p style="font-size: 0.9rem; color: var(--cyber-cyan);">Know: IP addressing, Ports, DNS, Subnetting</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tools Setup -->
+        <section class="content-section">
+            <h2 class="section-title">Essential Tools Setup</h2>
+            <p style="text-align: center; color: var(--cyber-light-gray); margin-bottom: 40px;">
+                Set up your bug bounty arsenal with these essential tools:
+            </p>
+            
+            <div class="tools-setup">
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <div class="tool-icon">B</div>
+                        <div class="tool-name">Burp Suite</div>
+                    </div>
+                    <p class="tool-description">
+                        The Swiss Army knife for web application security testing. Intercept, modify, and analyze HTTP requests.
+                    </p>
+                    <ul class="tool-features">
+                        <li>HTTP proxy for intercepting requests</li>
+                        <li>Automated vulnerability scanner</li>
+                        <li>Intruder for automated attacks</li>
+                        <li>Repeater for manual testing</li>
+                        <li>Extensive plugin ecosystem</li>
+                    </ul>
+                    <button class="install-btn" onclick="showInstallGuide('burp')">Install Guide</button>
+                </div>
+
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <div class="tool-icon">N</div>
+                        <div class="tool-name">Nmap</div>
+                    </div>
+                    <p class="tool-description">
+                        Network discovery and security auditing tool for port scanning and service enumeration.
+                    </p>
+                    <ul class="tool-features">
+                        <li>Port scanning and service detection</li>
+                        <li>OS fingerprinting</li>
+                        <li>Scriptable interactions with NSE</li>
+                        <li>Multiple scanning techniques</li>
+                        <li>Output in various formats</li>
+                    </ul>
+                    <button class="install-btn" onclick="showInstallGuide('nmap')">Install Guide</button>
+                </div>
+
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <div class="tool-icon">S</div>
+                        <div class="tool-name">SQLMap</div>
+                    </div>
+                    <p class="tool-description">
+                        Automatic SQL injection and database takeover tool for testing database security.
+                    </p>
+                    <ul class="tool-features">
+                        <li>Automatic SQL injection detection</li>
+                        <li>Database enumeration</li>
+                        <li>Data extraction capabilities</li>
+                        <li>Support for multiple databases</li>
+                        <li>Tamper scripts for WAF bypass</li>
+                    </ul>
+                    <button class="install-btn" onclick="showInstallGuide('sqlmap')">Install Guide</button>
+                </div>
+
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <div class="tool-icon">Z</div>
+                        <div class="tool-name">OWASP ZAP</div>
+                    </div>
+                    <p class="tool-description">
+                        Free security tool for finding vulnerabilities in web applications during development and testing.
+                    </p>
+                    <ul class="tool-features">
+                        <li>Free and open source</li>
+                        <li>Automated and passive scanning</li>
+                        <li>Easy to use interface</li>
+                        <li>API for automation</li>
+                        <li>Great for beginners</li>
+                    </ul>
+                    <button class="install-btn" onclick="showInstallGuide('zap')">Install Guide</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Learning Path -->
+        <section class="content-section">
+            <h2 class="section-title">Your Learning Journey</h2>
+            <p style="text-align: center; color: var(--cyber-light-gray); margin-bottom: 40px;">
+                Follow this structured path to become a successful bug bounty hunter:
+            </p>
+            
+            <div class="learning-path">
+                <div class="path-line"></div>
+                
+                <div class="path-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Foundation Building</h3>
+                        <p class="step-description">
+                            Master the fundamentals of web technologies, HTTP protocol, and basic security concepts. 
+                            This foundation is crucial for understanding how vulnerabilities work.
+                        </p>
+                        <div class="step-duration">Duration: 4-6 weeks</div>
+                    </div>
+                </div>
+
+                <div class="path-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Tools Mastery</h3>
+                        <p class="step-description">
+                            Learn to use essential security tools like Burp Suite, Nmap, and SQLMap. 
+                            Practice with vulnerable applications like DVWA, WebGoat, or OWASP Juice Shop.
+                        </p>
+                        <div class="step-duration">Duration: 3-4 weeks</div>
+                    </div>
+                </div>
+
+                <div class="path-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Practice & Labs</h3>
+                        <p class="step-description">
+                            Start with intentionally vulnerable applications and CTF challenges. 
+                            Platforms like HackTheBox, TryHackMe, and VulnHub are perfect for practice.
+                        </p>
+                        <div class="step-duration">Duration: 6-8 weeks</div>
+                    </div>
+                </div>
+
+                <div class="path-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h3 class="step-title">First Programs</h3>
+                        <p class="step-description">
+                            Start with Vulnerability Disclosure Programs (VDP) that don't offer monetary rewards 
+                            but provide valuable experience and recognition.
+                        </p>
+                        <div class="step-duration">Duration: 4-6 weeks</div>
+                    </div>
+                </div>
+
+                <div class="path-step">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Bug Bounty Platforms</h3>
+                        <p class="step-description">
+                            Join platforms like HackerOne, Bugcrowd, or Intigriti. 
+                            Start with public programs and gradually move to private invites as you build reputation.
+                        </p>
+                        <div class="step-duration">Duration: Ongoing</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- First Steps -->
+        <section class="content-section">
+            <h2 class="section-title">Your First Week Action Plan</h2>
+            <div class="cyber-card">
+                <h3 class="card-title">Day-by-Day Breakdown</h3>
+                <div class="card-content">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                        <div style="background: rgba(0, 255, 255, 0.1); padding: 20px; border-radius: 10px; border-left: 4px solid var(--cyber-cyan);">
+                            <h4 style="color: var(--cyber-cyan); margin-bottom: 10px;">Days 1-2: Environment Setup</h4>
+                            <ul style="list-style: none; padding: 0;">
+                                <li>• Install Kali Linux or security-focused distro</li>
+                                <li>• Set up Burp Suite Community Edition</li>
+                                <li>• Install essential browser extensions</li>
+                                <li>• Create accounts on bug bounty platforms</li>
+                            </ul>
+                        </div>
+                        
+                        <div style="background: rgba(255, 0, 255, 0.1); padding: 20px; border-radius: 10px; border-left: 4px solid var(--cyber-magenta);">
+                            <h4 style="color: var(--cyber-magenta); margin-bottom: 10px;">Days 3-4: Theory Learning</h4>
+                            <ul style="list-style: none; padding: 0;">
+                                <li>• Study HTTP protocol fundamentals</li>
+                                <li>• Learn about OWASP Top 10</li>
+                                <li>• Understand common vulnerability types</li>
+                                <li>• Read bug bounty write-ups and reports</li>
+                            </ul>
+                        </div>
+                        
+                        <div style="background: rgba(0, 255, 0, 0.1); padding: 20px; border-radius: 10px; border-left: 4px solid var(--cyber-green);">
+                            <h4 style="color: var(--cyber-green); margin-bottom: 10px;">Days 5-7: Hands-on Practice</h4>
+                            <ul style="list-style: none; padding: 0;">
+                                <li>• Set up DVWA or similar vulnerable app</li>
+                                <li>• Practice with Burp Suite on test sites</li>
+                                <li>• Try simple XSS and SQL injection tests</li>
+                                <li>• Write your first vulnerability report</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Common Mistakes -->
+        <section class="content-section">
+            <h2 class="section-title">Common Beginner Mistakes</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px;">
+                <div class="cyber-card" style="border-color: var(--cyber-orange);">
+                    <h3 class="card-title" style="color: var(--cyber-orange);">Mistake #1: Tool Reliance</h3>
+                    <div class="card-content">
+                        <p><strong>Problem:</strong> Relying too heavily on automated tools without understanding the underlying vulnerabilities.</p>
+                        <p style="margin-top: 15px;"><strong>Solution:</strong> Learn the manual techniques first, then use tools to automate and scale your testing.</p>
+                    </div>
+                </div>
+
+                <div class="cyber-card" style="border-color: var(--cyber-orange);">
+                    <h3 class="card-title" style="color: var(--cyber-orange);">Mistake #2: Skipping Fundamentals</h3>
+                    <div class="card-content">
+                        <p><strong>Problem:</strong> Jumping directly into advanced techniques without mastering the basics.</p>
+                        <p style="margin-top: 15px;"><strong>Solution:</strong> Build a strong foundation in web technologies and security concepts first.</p>
+                    </div>
+                </div>
+
+                <div class="cyber-card" style="border-color: var(--cyber-orange);">
+                    <h3 class="card-title" style="color: var(--cyber-orange);">Mistake #3: Poor Documentation</h3>
+                    <div class="card-content">
+                        <p><strong>Problem:</strong> Not documenting findings properly, leading to rejected reports.</p>
+                        <p style="margin-top: 15px;"><strong>Solution:</strong> Practice writing clear, detailed reports with proof of concepts.</p>
+                    </div>
+                </div>
+
+                <div class="cyber-card" style="border-color: var(--cyber-orange);">
+                    <h3 class="card-title" style="color: var(--cyber-orange);">Mistake #4: Scope Violations</h3>
+                    <div class="card-content">
+                        <p><strong>Problem:</strong> Testing out-of-scope assets or using prohibited techniques.</p>
+                        <p style="margin-top: 15px;"><strong>Solution:</strong> Always read and follow program rules and scope carefully.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Next Steps -->
+        <section class="content-section">
+            <h2 class="section-title">Ready to Continue?</h2>
+            <div class="cyber-card">
+                <h3 class="card-title">Your Next Steps</h3>
+                <div class="card-content" style="text-align: center;">
+                    <p style="font-size: 1.1rem; margin-bottom: 30px;">
+                        You've learned the fundamentals. Now it's time to dive deeper into the methodology and tools.
+                    </p>
+                    <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+                        <a href="methodology.html" class="cyber-btn">Learn Methodology</a>
+                        <a href="tools.html" class="cyber-btn">Explore Tools</a>
+                        <a href="platforms.html" class="cyber-btn">Compare Platforms</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer style="background: var(--cyber-darker); border-top: 2px solid var(--cyber-cyan); padding: 40px 20px; text-align: center;">
+        <div style="max-width: 1200px; margin: 0 auto;">
+            <p style="color: var(--cyber-light-gray); font-size: 0.9rem;">
+                © 2024 Bug Bounty Hunter Guide. Empowering ethical hackers worldwide.
+            </p>
+            <p style="color: var(--cyber-cyan); font-size: 0.8rem; margin-top: 10px;">
+                Always practice responsible disclosure and follow program guidelines.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Install guide functionality
+        function showInstallGuide(tool) {
+            const guides = {
+                burp: 'Burp Suite Installation:\n\n1. Download from portswigger.net\n2. Install Java Runtime Environment\n3. Run installer\n4. Configure browser proxy to 127.0.0.1:8080\n5. Install CA certificate in browser',
+                
+                nmap: 'Nmap Installation:\n\nLinux: sudo apt-get install nmap\nmacOS: brew install nmap\nWindows: Download from nmap.org\n\nVerify: nmap --version',
+                
+                sqlmap: 'SQLMap Installation:\n\nLinux: sudo apt-get install sqlmap\nGit: git clone https://github.com/sqlmapproject/sqlmap.git\nPython: python3 sqlmap.py --version\n\nRun: python3 sqlmap.py -u "target"',
+                
+                zap: 'OWASP ZAP Installation:\n\n1. Download from zaproxy.org\n2. Choose platform installer\n3. Install Java 8+\n4. Run ZAP\n5. Configure proxy settings'
+            };
+            
+            alert(guides[tool] || 'Installation guide not available');
+        }
+
+        // Initialize page animations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate skill importance bars
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const fills = entry.target.querySelectorAll('.importance-fill');
+                        fills.forEach(fill => {
+                            const width = fill.style.width;
+                            fill.style.width = '0%';
+                            setTimeout(() => {
+                                fill.style.width = width;
+                            }, 500);
+                        });
+                    }
+                });
+            });
+            
+            document.querySelectorAll('.skill-item').forEach(item => {
+                observer.observe(item);
+            });
+        });
+    </script>
+</body>
+</html>

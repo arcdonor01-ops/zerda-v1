@@ -1,0 +1,1682 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning Journey - Bug Bounty Hunter Guide</title>
+    <meta name="description" content="Panduan belajar bug bounty hunting yang mendalam. Pelajari cara menggunakan tools, analogi antar tools, dan progressi skill yang sistematis.">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Core Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.12/typed.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    
+    <style>
+        /* Import cyberpunk theme */
+        :root {
+            --cyber-dark: #0a0a0a;
+            --cyber-darker: #050505;
+            --cyber-cyan: #00ffff;
+            --cyber-magenta: #ff00ff;
+            --cyber-green: #00ff00;
+            --cyber-orange: #ff6600;
+            --cyber-purple: #8a2be2;
+            --cyber-gray: #333333;
+            --cyber-light-gray: #666666;
+            --cyber-white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier Prime', monospace;
+            background: var(--cyber-dark);
+            color: var(--cyber-white);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        .cyber-nav {
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(15px);
+            border-bottom: 2px solid var(--cyber-cyan);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 15px 0;
+            box-shadow: 0 2px 20px rgba(0, 255, 255, 0.3);
+        }
+
+        .cyber-nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .cyber-nav a {
+            color: var(--cyber-white);
+            text-decoration: none;
+            text-transform: uppercase;
+            font-weight: bold;
+            position: relative;
+            padding: 8px 16px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+
+        .cyber-nav a:hover, .cyber-nav a.active {
+            color: var(--cyber-cyan);
+            text-shadow: 0 0 15px var(--cyber-cyan);
+            transform: translateY(-2px);
+        }
+
+        .cyber-nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--cyber-cyan);
+            transition: width 0.3s ease;
+        }
+
+        .cyber-nav a:hover::after, .cyber-nav a.active::after {
+            width: 100%;
+        }
+
+        /* Header */
+        .page-header {
+            background: linear-gradient(135deg, var(--cyber-darker), var(--cyber-dark));
+            padding: 120px 20px 60px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 25% 45%, rgba(0,255,255,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 55%, rgba(255,0,255,0.1) 0%, transparent 50%);
+        }
+
+        .page-title {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 900;
+            color: var(--cyber-cyan);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px var(--cyber-cyan);
+            position: relative;
+            z-index: 2;
+        }
+
+        .page-subtitle {
+            font-size: clamp(1rem, 3vw, 1.3rem);
+            color: var(--cyber-light-gray);
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 60px 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Learning Path Overview */
+        .learning-overview {
+            margin-bottom: 80px;
+            text-align: center;
+        }
+
+        .overview-title {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(2rem, 5vw, 3rem);
+            color: var(--cyber-cyan);
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 20px var(--cyber-cyan);
+        }
+
+        .learning-stages {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            margin: 50px 0;
+        }
+
+        .stage-card {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--cyber-cyan);
+            border-radius: 20px;
+            padding: 35px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .stage-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0, 255, 255, 0.3);
+        }
+
+        .stage-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--cyber-cyan), var(--cyber-magenta), var(--cyber-green));
+            animation: scan-line 2s linear infinite;
+        }
+
+        @keyframes scan-line {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .stage-number {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--cyber-magenta);
+            margin-bottom: 15px;
+            text-shadow: 0 0 20px var(--cyber-magenta);
+        }
+
+        .stage-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.4rem;
+            color: var(--cyber-cyan);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .stage-description {
+            color: var(--cyber-light-gray);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .stage-duration {
+            color: var(--cyber-orange);
+            font-weight: bold;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        /* Detailed Learning Path */
+        .learning-path-detailed {
+            margin-bottom: 100px;
+        }
+
+        .path-section {
+            margin-bottom: 80px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--cyber-cyan);
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cyber-cyan), var(--cyber-magenta));
+            animation: scan-line 2s linear infinite;
+        }
+
+        .section-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, var(--cyber-cyan), var(--cyber-magenta));
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--cyber-dark);
+        }
+
+        .section-info h2 {
+            font-family: 'Orbitron', monospace;
+            font-size: 2rem;
+            color: var(--cyber-cyan);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .section-info p {
+            color: var(--cyber-light-gray);
+            font-size: 1.1rem;
+        }
+
+        /* Tools Learning Grid */
+        .tools-learning-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .tool-learning-card {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--cyber-magenta);
+            border-radius: 15px;
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .tool-learning-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(255, 0, 255, 0.2);
+        }
+
+        .tool-learning-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cyber-magenta), var(--cyber-cyan));
+            animation: scan-line 2s linear infinite;
+        }
+
+        .tool-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .tool-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--cyber-magenta);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--cyber-dark);
+            font-weight: bold;
+        }
+
+        .tool-name {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.3rem;
+            color: var(--cyber-magenta);
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .tool-category {
+            color: var(--cyber-cyan);
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .tool-description {
+            color: var(--cyber-light-gray);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .tool-analogy {
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid var(--cyber-cyan);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .analogy-title {
+            color: var(--cyber-cyan);
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        .analogy-content {
+            color: var(--cyber-white);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .tool-usage {
+            margin-bottom: 20px;
+        }
+
+        .usage-title {
+            color: var(--cyber-green);
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        .usage-steps {
+            list-style: none;
+        }
+
+        .usage-steps li {
+            color: var(--cyber-white);
+            margin-bottom: 8px;
+            position: relative;
+            padding-left: 25px;
+            font-size: 0.9rem;
+        }
+
+        .usage-steps li::before {
+            content: '▶';
+            color: var(--cyber-green);
+            position: absolute;
+            left: 0;
+        }
+
+        .tool-progression {
+            background: var(--cyber-darker);
+            border: 1px solid var(--cyber-gray);
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .progression-title {
+            color: var(--cyber-orange);
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        .progression-path {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .progression-step {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            color: var(--cyber-white);
+            border: 1px solid var(--cyber-gray);
+        }
+
+        .progression-arrow {
+            color: var(--cyber-cyan);
+            font-weight: bold;
+        }
+
+        /* Interactive Tool Comparison */
+        .tool-comparison {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--cyber-purple);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 60px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-comparison::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--cyber-purple), var(--cyber-cyan));
+            animation: scan-line 2s linear infinite;
+        }
+
+        .comparison-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.8rem;
+            color: var(--cyber-purple);
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .comparison-selector {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .selector-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid var(--cyber-gray);
+            color: var(--cyber-white);
+            padding: 12px 24px;
+            cursor: pointer;
+            border-radius: 25px;
+            font-family: 'Courier Prime', monospace;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .selector-btn:hover,
+        .selector-btn.active {
+            border-color: var(--cyber-purple);
+            background: rgba(138, 43, 226, 0.2);
+            color: var(--cyber-purple);
+            box-shadow: 0 0 15px rgba(138, 43, 226, 0.3);
+        }
+
+        .comparison-content {
+            display: none;
+        }
+
+        .comparison-content.active {
+            display: block;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--cyber-gray);
+        }
+
+        .comparison-table th {
+            background: rgba(138, 43, 226, 0.1);
+            color: var(--cyber-purple);
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .comparison-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Learning Milestones */
+        .milestones {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--cyber-green);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 60px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .milestones::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--cyber-green), var(--cyber-cyan));
+            animation: scan-line 2s linear infinite;
+        }
+
+        .milestones-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.8rem;
+            color: var(--cyber-green);
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .milestone-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border-left: 4px solid var(--cyber-green);
+        }
+
+        .milestone-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--cyber-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--cyber-dark);
+        }
+
+        .milestone-content {
+            flex: 1;
+        }
+
+        .milestone-title {
+            color: var(--cyber-green);
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-family: 'Orbitron', monospace;
+            text-transform: uppercase;
+        }
+
+        .milestone-description {
+            color: var(--cyber-white);
+            line-height: 1.6;
+        }
+
+        .milestone-indicator {
+            width: 30px;
+            height: 30px;
+            border: 2px solid var(--cyber-gray);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--cyber-gray);
+            font-weight: bold;
+        }
+
+        .milestone-item.completed .milestone-indicator {
+            background: var(--cyber-green);
+            border-color: var(--cyber-green);
+            color: var(--cyber-dark);
+        }
+
+        .milestone-item.current .milestone-indicator {
+            border-color: var(--cyber-cyan);
+            color: var(--cyber-cyan);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        /* Practical Exercises */
+        .practical-exercises {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--cyber-orange);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 60px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .practical-exercises::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--cyber-orange), var(--cyber-cyan));
+            animation: scan-line 2s linear infinite;
+        }
+
+        .exercises-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.8rem;
+            color: var(--cyber-orange);
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .exercise-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--cyber-gray);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .exercise-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .exercise-number {
+            width: 40px;
+            height: 40px;
+            background: var(--cyber-orange);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--cyber-dark);
+        }
+
+        .exercise-title {
+            color: var(--cyber-orange);
+            font-weight: bold;
+            font-family: 'Orbitron', monospace;
+            text-transform: uppercase;
+        }
+
+        .exercise-description {
+            color: var(--cyber-white);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .exercise-steps {
+            margin-bottom: 20px;
+        }
+
+        .steps-title {
+            color: var(--cyber-cyan);
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        .exercise-steps-list {
+            list-style: none;
+        }
+
+        .exercise-steps-list li {
+            color: var(--cyber-white);
+            margin-bottom: 10px;
+            position: relative;
+            padding-left: 30px;
+            line-height: 1.5;
+        }
+
+        .exercise-steps-list li::before {
+            content: '⚡';
+            position: absolute;
+            left: 0;
+            color: var(--cyber-cyan);
+        }
+
+        .exercise-tools {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--cyber-gray);
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .tools-title {
+            color: var(--cyber-magenta);
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        .tools-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tool-tag {
+            background: rgba(255, 0, 255, 0.2);
+            border: 1px solid var(--cyber-magenta);
+            color: var(--cyber-magenta);
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .cyber-nav ul {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .learning-stages {
+                grid-template-columns: 1fr;
+            }
+            
+            .tools-learning-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+            
+            .comparison-selector {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .milestone-item {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        /* Utility Classes */
+        .text-cyan { color: var(--cyber-cyan); }
+        .text-magenta { color: var(--cyber-magenta); }
+        .text-green { color: var(--cyber-green); }
+        .text-orange { color: var(--cyber-orange); }
+        .text-purple { color: var(--cyber-purple); }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--cyber-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--cyber-cyan);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--cyber-magenta);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="cyber-nav">
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="getting-started.html">Getting Started</a></li>
+            <li><a href="methodology.html">Methodology</a></li>
+            <li><a href="tools.html">Tools</a></li>
+            <li><a href="platforms.html">Platforms</a></li>
+            <li><a href="learning-journey.html" class="active">Learning Journey</a></li>
+            <li><a href="community.html">Community</a></li>
+        </ul>
+    </nav>
+
+    <!-- Header -->
+    <header class="page-header">
+        <h1 class="page-title">Learning Journey</h1>
+        <p class="page-subtitle">
+            Master the art of bug bounty hunting through systematic learning. Understand tools deeply, 
+            learn their relationships, and progress from beginner to expert with hands-on exercises.
+        </p>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Learning Overview -->
+        <section class="learning-overview">
+            <h2 class="overview-title">Your Path to Mastery</h2>
+            <p style="text-align: center; color: var(--cyber-light-gray); margin-bottom: 50px; font-size: 1.1rem;">
+                Bug bounty hunting is a journey of continuous learning. Each stage builds upon the previous one, 
+                creating a comprehensive skill set that makes you an effective security researcher.
+            </p>
+            
+            <div class="learning-stages">
+                <div class="stage-card" onclick="scrollToSection('foundation')">
+                    <div class="stage-number">01</div>
+                    <h3 class="stage-title">Foundation Building</h3>
+                    <p class="stage-description">
+                        Master the fundamentals of web technologies, networking, and security concepts. 
+                        This stage is crucial for understanding how vulnerabilities work.
+                    </p>
+                    <div class="stage-duration">Duration: 4-6 weeks</div>
+                </div>
+
+                <div class="stage-card" onclick="scrollToSection('tools')">
+                    <div class="stage-number">02</div>
+                    <h3 class="stage-title">Tools Mastery</h3>
+                    <p class="stage-description">
+                        Learn to use essential security tools effectively. Understand not just how to use them, 
+                        but when and why to use each tool in different scenarios.
+                    </p>
+                    <div class="stage-duration">Duration: 6-8 weeks</div>
+                </div>
+
+                <div class="stage-card" onclick="scrollToSection('practice')">
+                    <div class="stage-number">03</div>
+                    <h3 class="stage-title">Hands-on Practice</h3>
+                    <p class="stage-description">
+                        Apply your knowledge in controlled environments. Practice with vulnerable applications 
+                        and CTF challenges to build real-world skills.
+                    </p>
+                    <div class="stage-duration">Duration: 8-12 weeks</div>
+                </div>
+
+                <div class="stage-card" onclick="scrollToSection('real-world')">
+                    <div class="stage-number">04</div>
+                    <h3 class="stage-title">Real-World Application</h3>
+                    <p class="stage-description">
+                        Start hunting on actual bug bounty programs. Begin with VDPs and gradually move to 
+                        paid programs as you build confidence and reputation.
+                    </p>
+                    <div class="stage-duration">Duration: Ongoing</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Foundation Building -->
+        <section id="foundation" class="path-section">
+            <div class="section-header">
+                <div class="section-icon">🏗️</div>
+                <div class="section-info">
+                    <h2>Stage 1: Foundation Building</h2>
+                    <p>Build a solid foundation in web technologies, networking, and security fundamentals.</p>
+                </div>
+            </div>
+
+            <div class="cyber-card" style="background: rgba(0, 0, 0, 0.8); border: 2px solid var(--cyber-cyan); border-radius: 15px; padding: 30px; margin: 30px 0;">
+                <h3 class="card-title" style="font-family: 'Orbitron', monospace; color: var(--cyber-cyan); margin-bottom: 20px; text-transform: uppercase;">Essential Knowledge Areas</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px;">
+                    <div>
+                        <h4 style="color: var(--cyber-magenta); margin-bottom: 15px; font-family: 'Orbitron', monospace;">Web Technologies</h4>
+                        <ul style="list-style: none; padding: 0;">
+                            <li style="margin-bottom: 8px; color: var(--cyber-white);">• <span class="text-cyan">HTTP/HTTPS Protocol</span> - Request/Response cycle</li>
+                            <li style="margin-bottom: 8px; color: var(--cyber-white);">• <span class="text-cyan">HTML/CSS</span> - Structure and styling</li>
+                            <li style="margin-bottom: 8px; color: var(--cyber-white);">• <span class="text-cyan">JavaScript</span> - Client-side programming</li>
+                            <li style="margin-bottom: 8px; color: var(--cyber-white);">• <span class="text-cyan">DOM Manipulation</span> - Dynamic content</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--cyber-magenta); margin-bottom: 15px; font-family: 'Orbitron', monospace;">Networking Basics</h4>
+                        <ul style="list-style: none; padding: 0;">
+                            <li style="margin-bottom: 8px; color: var(--cyber-white);">• <span class="text-cyan">TCP/IP Stack</span> - Network communication</li>
+                            <li style="margin-bottom: 8px; color: var(--cyber-white);">• <span class="text-cyan">DNS Resolution</span> - Domain to IP</li>
+                            <li style="margin-bottom: 8px; color: var(--cyber-white);">• <span class="text-cyan">Ports & Services</span> - Network endpoints</li>
+                            <li style="margin-bottom: 8px; color: var(--cyber-white);">• <span class="text-cyan">SSL/TLS</span> - Encryption</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="color: var(--cyber-magenta); margin-bottom: 15px; font-family: 'Orbitron', monospace;">Security Fundamentals</h4>
+                        <ul style="list-style: none; padding: 0;">
+                            <li style="margin-bottom: 8px; color: var(--cyber-white);">• <span class="text-cyan">OWASP Top 10</span> - Common vulnerabilities</li>
+                            <li style="margin-bottom: 8px; color: var(--cyber-white);">• <span class="text-cyan">Input Validation</span> - Data sanitization</li>
+                            <li style="margin-bottom: 8px; color: var(--cyber-white);">• <span class="text-cyan">Authentication</span> - Identity verification</li>
+                            <li style="margin-bottom: 8px; color: var(--cyber-white);">• <span class="text-cyan">Authorization</span> - Access control</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tools Mastery -->
+        <section id="tools" class="path-section">
+            <div class="section-header">
+                <div class="section-icon">🛠️</div>
+                <div class="section-info">
+                    <h2>Stage 2: Tools Mastery</h2>
+                    <p>Learn essential bug bounty tools, their relationships, and practical usage scenarios.</p>
+                </div>
+            </div>
+
+            <div class="tools-learning-grid">
+                <!-- Subfinder -->
+                <div class="tool-learning-card">
+                    <div class="tool-header">
+                        <div class="tool-icon">S</div>
+                        <div>
+                            <div class="tool-name">Subfinder</div>
+                            <div class="tool-category">Subdomain Discovery</div>
+                        </div>
+                    </div>
+                    <p class="tool-description">
+                        Subfinder adalah tool subdomain discovery yang menggunakan berbagai sumber passive dan active 
+                        untuk menemukan subdomain yang terkait dengan target domain.
+                    </p>
+                    
+                    <div class="tool-analogy">
+                        <div class="analogy-title">🔍 Analogi: Mesin Pencari Subdomain</div>
+                        <div class="analogy-content">
+                            Seperti Google untuk subdomain. Subfinder mencari informasi dari berbagai sumber 
+                            (certificate transparency, DNS records, search engines) dan menggabungkannya menjadi 
+                            satu daftar komprehensif. Mirip dengan recon-ng tapi lebih fokus pada subdomain.
+                        </div>
+                    </div>
+
+                    <div class="tool-usage">
+                        <div class="usage-title">🚀 Cara Penggunaan:</div>
+                        <ul class="usage-steps">
+                            <li>Install: <code>go install github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest</code></li>
+                            <li>Basic usage: <code>subfinder -d target.com -all</code></li>
+                            <li>Dengan API keys: <code>subfinder -d target.com -all -config config.yaml</code></li>
+                            <li>Output ke file: <code>subfinder -d target.com -o subdomains.txt</code></li>
+                        </ul>
+                    </div>
+
+                    <div class="tool-progression">
+                        <div class="progression-title">📈 Progressi Skill:</div>
+                        <div class="progression-path">
+                            <span class="progression-step">Basic Usage</span>
+                            <span class="progression-arrow">→</span>
+                            <span class="progression-step">API Integration</span>
+                            <span class="progression-arrow">→</span>
+                            <span class="progression-step">Automation Scripts</span>
+                            <span class="progression-arrow">→</span>
+                            <span class="progression-step">Custom Sources</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- httpx -->
+                <div class="tool-learning-card">
+                    <div class="tool-header">
+                        <div class="tool-icon">H</div>
+                        <div>
+                            <div class="tool-name">httpx</div>
+                            <div class="tool-category">HTTP Probing</div>
+                        </div>
+                    </div>
+                    <p class="tool-description">
+                        httpx adalah tool untuk melakukan HTTP probing pada daftar domain/subdomain untuk 
+                        mengecek mana yang aktif dan mengumpulkan informasi tentangnya.
+                    </p>
+                    
+                    <div class="tool-analogy">
+                        <div class="analogy-title">🔍 Analogi: Metal Detector untuk Website</div>
+                        <div class="analogy-content">
+                            Seperti metal detector yang memindai area untuk menemukan logam, httpx memindai 
+                            daftar domain untuk menemukan website yang aktif. Mirip dengan httprobe tapi 
+                            dengan fitur yang lebih lengkap seperti technology detection dan screenshot.
+                        </div>
+                    </div>
+
+                    <div class="tool-usage">
+                        <div class="usage-title">🚀 Cara Penggunaan:</div>
+                        <ul class="usage-steps">
+                            <li>Install: <code>go install github.com/projectdiscovery/httpx/cmd/httpx@latest</code></li>
+                            <li>Basic probing: <code>httpx -l subdomains.txt</code></li>
+                            <li>Dengan status code: <code>httpx -l subdomains.txt -status-code</code></li>
+                            <li>Technology detection: <code>httpx -l subdomains.txt -tech-detect</code></li>
+                        </ul>
+                    </div>
+
+                    <div class="tool-progression">
+                        <div class="progression-title">📈 Progressi Skill:</div>
+                        <div class="progression-path">
+                            <span class="progression-step">Basic Probing</span>
+                            <span class="progression-arrow">→</span>
+                            <span class="progression-step">Technology Detection</span>
+                            <span class="progression-arrow">→</span>
+                            <span class="progression-step">Custom Ports</span>
+                            <span class="progression-arrow">→</span>
+                            <span class="progression-step">Pipeline Integration</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Burp Suite -->
+                <div class="tool-learning-card">
+                    <div class="tool-header">
+                        <div class="tool-icon">B</div>
+                        <div>
+                            <div class="tool-name">Burp Suite</div>
+                            <div class="tool-category">Web Application Security</div>
+                        </div>
+                    </div>
+                    <p class="tool-description">
+                        Burp Suite adalah platform komprehensif untuk web application security testing. 
+                        Memiliki proxy, scanner, intruder, dan banyak tools lainnya dalam satu aplikasi.
+                    </p>
+                    
+                    <div class="tool-analogy">
+                        <div class="analogy-title">🔍 Analogi: Swiss Army Knife untuk Web Security</div>
+                        <div class="analogy-content">
+                            Seperti Swiss Army Knife yang memiliki berbagai alat dalam satu paket, Burp Suite 
+                            menggabungkan proxy, scanner, repeater, intruder, dan banyak fitur lainnya. 
+                            Mirip dengan OWASP ZAP tapi dengan fitur yang lebih profesional dan komersial.
+                        </div>
+                    </div>
+
+                    <div class="tool-usage">
+                        <div class="usage-title">🚀 Cara Penggunaan:</div>
+                        <ul class="usage-steps">
+                            <li>Download dari portswigger.net dan install</li>
+                            <li>Configure browser proxy ke 127.0.0.1:8080</li>
+                            <li>Install CA certificate di browser</li>
+                            <li>Mulai dengan proxy intercept OFF</li>
+                            <li>Pelajari basic tools: Proxy, Repeater, Intruder</li>
+                        </ul>
+                    </div>
+
+                    <div class="tool-progression">
+                        <div class="progression-title">📈 Progressi Skill:</div>
+                        <div class="progression-path">
+                            <span class="progression-step">Basic Proxy</span>
+                            <span class="progression-arrow">→</span>
+                            <span class="progression-step">Manual Testing</span>
+                            <span class="progression-arrow">→</span>
+                            <span class="progression-step">Automated Scanning</span>
+                            <span class="progression-arrow">→</span>
+                            <span class="progression-step">Extensions & Macros</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nmap -->
+                <div class="tool-learning-card">
+                    <div class="tool-header">
+                        <div class="tool-icon">N</div>
+                        <div>
+                            <div class="tool-name">Nmap</div>
+                            <div class="tool-category">Network Discovery</div>
+                        </div>
+                    </div>
+                    <p class="tool-description">
+                        Nmap (Network Mapper) adalah tool untuk network discovery dan security auditing. 
+                        Digunakan untuk port scanning, service detection, dan OS fingerprinting.
+                    </p>
+                    
+                    <div class="tool-analogy">
+                        <div class="analogy-title">🔍 Analogi: Radar untuk Jaringan</div>
+                        <div class="analogy-content">
+                            Seperti radar yang memindai langit untuk menemukan pesawat, Nmap memindai jaringan 
+                            untuk menemukan host, port, dan services yang aktif. Mirip dengan Masscan tapi 
+                            dengan pendekatan yang lebih methodical dan akurat.
+                        </div>
+                    </div>
+
+                    <div class="tool-usage">
+                        <div class="usage-title">🚀 Cara Penggunaan:</div>
+                        <ul class="usage-steps">
+                            <li>Install: <code>sudo apt-get install nmap</code></li>
+                            <li>Basic scan: <code>nmap -sV target.com</code></li>
+                            <li>Full port scan: <code>nmap -sV -p- target.com</code></li>
+                            <li>OS detection: <code>nmap -O target.com</code></li>
+                            <li>Service detection: <code>nmap -sC -sV target.com</code></li>
+                        </ul>
+                    </div>
+
+                    <div class="tool-progression">
+                        <div class="progression-title">📈 Progressi Skill:</div>
+                        <div class="progression-path">
+                            <span class="progression-step">Basic Scanning</span>
+                            <span class="progression-arrow">→</span>
+                            <span class="progression-step">Service Detection</span>
+                            <span class="progression-arrow">→</span>
+                            <span class="progression-step">NSE Scripts</span>
+                            <span class="progression-arrow">→</span>
+                            <span class="progression-step">Custom Scripts</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SQLMap -->
+                <div class="tool-learning-card">
+                    <div class="tool-header">
+                        <div class="tool-icon">S</div>
+                        <div>
+                            <div class="tool-name">SQLMap</div>
+                            <div class="tool-category">SQL Injection</div>
+                        </div>
+                    </div>
+                    <p class="tool-description">
+                        SQLMap adalah tool automatic SQL injection dan database takeover. 
+                        Bisa mendeteksi, exploit, dan mengambil data dari database yang vulnerable.
+                    </p>
+                    
+                    <div class="tool-analogy">
+                        <div class="analogy-title">🔍 Analogi: Master Key untuk Database</div>
+                        <div class="analogy-content">
+                            Seperti master key yang bisa membuka banyak pintu, SQLMap bisa menemukan dan 
+                            memanfaatkan berbagai jenis SQL injection. Mirip dengan manual SQL injection 
+                            tapi dengan automation dan intelligence yang lebih advanced.
+                        </div>
+                    </div>
+
+                    <div class="tool-usage">
+                        <div class="usage-title">🚀 Cara Penggunaan:</div>
+                        <ul class="usage-steps">
+                            <li>Install: <code>sudo apt-get install sqlmap</code></li>
+                            <li>Basic test: <code>sqlmap -u "http://target.com/page?id=1"</code></li>
+                            <li>Database enumeration: <code>sqlmap -u "url" --dbs</code></li>
+                            <li>Table enumeration: <code>sqlmap -u "url" -D database --tables</code></li>
+                            <li>Data extraction: <code>sqlmap -u "url" -D database -T users --dump</code></li>
+                        </ul>
+                    </div>
+
+                    <div class="tool-progression">
+                        <div class="progression-title">📈 Progressi Skill:</div>
+                        <div class="progression-path">
+                            <span class="progression-step">Basic Detection</span>
+                            <span class="progression-arrow">→</span>
+                            <span class="progression-step">Database Enumeration</span>
+                            <span class="progression-arrow">→</span>
+                            <span class="progression-step">Data Extraction</span>
+                            <span class="progression-arrow">→</span>
+                            <span class="progression-step">WAF Bypass</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nuclei -->
+                <div class="tool-learning-card">
+                    <div class="tool-header">
+                        <div class="tool-icon">N</div>
+                        <div>
+                            <div class="tool-name">Nuclei</div>
+                            <div class="tool-category">Vulnerability Scanner</div>
+                        </div>
+                    </div>
+                    <p class="tool-description">
+                        Nuclei adalah fast vulnerability scanner berbasis template YAML. 
+                        Cocok untuk large-scale scanning dengan community-driven templates.
+                    </p>
+                    
+                    <div class="tool-analogy">
+                        <div class="analogy-title">🔍 Analogi: Quality Control Inspector</div>
+                        <div class="analogy-content">
+                            Seperti QC inspector yang memeriksa produk dengan checklist, Nuclei memeriksa 
+                            target dengan template-template yang spesifik. Mirip dengan Nikto atau 
+                            Nessus tapi lebih cepat dan customizable.
+                        </div>
+                    </div>
+
+                    <div class="tool-usage">
+                        <div class="usage-title">🚀 Cara Penggunaan:</div>
+                        <ul class="usage-steps">
+                            <li>Install: <code>go install github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest</code></li>
+                            <li>Basic scan: <code>nuclei -l targets.txt</code></li>
+                            <li>Specific templates: <code>nuclei -l targets.txt -t exposures/</code></li>
+                            <li>Update templates: <code>nuclei -ut</code></li>
+                            <li>Custom output: <code>nuclei -l targets.txt -o results.txt</code></li>
+                        </ul>
+                    </div>
+
+                    <div class="tool-progression">
+                        <div class="progression-title">📈 Progressi Skill:</div>
+                        <div class="progression-path">
+                            <span class="progression-step">Basic Scanning</span>
+                            <span class="progression-arrow">→</span>
+                            <span class="progression-step">Template Selection</span>
+                            <span class="progression-arrow">→</span>
+                            <span class="progression-step">Custom Templates</span>
+                            <span class="progression-arrow">→</span>
+                            <span class="progression-step">Workflows</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tool Comparison Interactive -->
+        <section class="tool-comparison">
+            <h3 class="comparison-title">Tool Comparison Matrix</h3>
+            <div class="comparison-selector">
+                <button class="selector-btn active" onclick="showComparison('reconnaissance')">Reconnaissance</button>
+                <button class="selector-btn" onclick="showComparison('scanning')">Scanning</button>
+                <button class="selector-btn" onclick="showComparison('exploitation')">Exploitation</button>
+            </div>
+
+            <div class="comparison-content active" id="reconnaissance-comparison">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Tool</th>
+                            <th>Primary Use</th>
+                            <th>Speed</th>
+                            <th>Learning Curve</th>
+                            <th>Best For</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="text-cyan">Subfinder</td>
+                            <td>Subdomain enumeration</td>
+                            <td class="text-green">Very Fast</td>
+                            <td class="text-green">Easy</td>
+                            <td>Passive reconnaissance</td>
+                        </tr>
+                        <tr>
+                            <td class="text-cyan">Amass</td>
+                            <td>Network mapping</td>
+                            <td class="text-orange">Medium</td>
+                            <td class="text-orange">Medium</td>
+                            <td>Comprehensive discovery</td>
+                        </tr>
+                        <tr>
+                            <td class="text-cyan">httpx</td>
+                            <td>HTTP probing</td>
+                            <td class="text-green">Fast</td>
+                            <td class="text-green">Easy</td>
+                            <td>Live host detection</td>
+                        </tr>
+                        <tr>
+                            <td class="text-cyan">Nmap</td>
+                            <td>Port scanning</td>
+                            <td class="text-orange">Medium</td>
+                            <td class="text-orange">Medium</td>
+                            <td>Service enumeration</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="comparison-content" id="scanning-comparison">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Tool</th>
+                            <th>Primary Use</th>
+                            <th>Automation</th>
+                            <th>Accuracy</th>
+                            <th>Best For</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="text-magenta">Burp Suite</td>
+                            <td>Web app testing</td>
+                            <td class="text-orange">Semi-auto</td>
+                            <td class="text-green">High</td>
+                            <td>Manual testing</td>
+                        </tr>
+                        <tr>
+                            <td class="text-magenta">OWASP ZAP</td>
+                            <td>Web app scanning</td>
+                            <td class="text-green">Auto</td>
+                            <td class="text-orange">Medium</td>
+                            <td>Beginners</td>
+                        </tr>
+                        <tr>
+                            <td class="text-magenta">Nuclei</td>
+                            <td>Vulnerability scanning</td>
+                            <td class="text-green">Auto</td>
+                            <td class="text-orange">Medium</td>
+                            <td>Large scale scanning</td>
+                        </tr>
+                        <tr>
+                            <td class="text-magenta">WhatWeb</td>
+                            <td>Technology detection</td>
+                            <td class="text-green">Auto</td>
+                            <td class="text-green">High</td>
+                            <td>Tech stack analysis</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="comparison-content" id="exploitation-comparison">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Tool</th>
+                            <th>Vulnerability Type</th>
+                            <th>Automation Level</th>
+                            <th>Skill Required</th>
+                            <th>Best For</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="text-orange">SQLMap</td>
+                            <td>SQL Injection</td>
+                            <td class="text-green">Full Auto</td>
+                            <td class="text-green">Beginner</td>
+                            <td>Database exploitation</td>
+                        </tr>
+                        <tr>
+                            <td class="text-orange">XSStrike</td>
+                            <td>XSS</td>
+                            <td class="text-orange">Semi-auto</td>
+                            <td class="text-orange">Intermediate</td>
+                            <td>XSS detection</td>
+                        </tr>
+                        <tr>
+                            <td class="text-orange">Metasploit</td>
+                            <td>Multiple</td>
+                            <td class="text-green">Full Auto</td>
+                            <td class="text-magenta">Advanced</td>
+                            <td>Post-exploitation</td>
+                        </tr>
+                        <tr>
+                            <td class="text-orange">BeEF</td>
+                            <td>Browser Exploitation</td>
+                            <td class="text-green">Full Auto</td>
+                            <td class="text-orange">Intermediate</td>
+                            <td>Client-side attacks</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Learning Milestones -->
+        <section class="milestones">
+            <h3 class="milestones-title">Learning Milestones</h3>
+            
+            <div class="milestone-item completed">
+                <div class="milestone-icon">🎯</div>
+                <div class="milestone-content">
+                    <div class="milestone-title">First Subdomain Found</div>
+                    <div class="milestone-description">
+                        Successfully discover your first subdomain using Subfinder or similar tools. 
+                        This milestone marks your entry into the world of reconnaissance.
+                    </div>
+                </div>
+                <div class="milestone-indicator">✓</div>
+            </div>
+
+            <div class="milestone-item completed">
+                <div class="milestone-icon">🔍</div>
+                <div class="milestone-content">
+                    <div class="milestone-title">First Vulnerability Identified</div>
+                    <div class="milestone-description">
+                        Find your first real vulnerability, even if it's just a missing security header. 
+                        This shows you understand basic security concepts.
+                    </div>
+                </div>
+                <div class="milestone-indicator">✓</div>
+            </div>
+
+            <div class="milestone-item current">
+                <div class="milestone-icon">📝</div>
+                <div class="milestone-content">
+                    <div class="milestone-title">First Bug Report Submitted</div>
+                    <div class="milestone-description">
+                        Submit your first bug report to a VDP or bug bounty program. 
+                        Learning to communicate findings effectively is crucial.
+                    </div>
+                </div>
+                <div class="milestone-indicator">●</div>
+            </div>
+
+            <div class="milestone-item">
+                <div class="milestone-icon">💰</div>
+                <div class="milestone-content">
+                    <div class="milestone-title">First Bounty Earned</div>
+                    <div class="milestone-description">
+                        Receive your first monetary reward for a valid vulnerability. 
+                        This validates your skills and motivates further learning.
+                    </div>
+                </div>
+                <div class="milestone-indicator">○</div>
+            </div>
+
+            <div class="milestone-item">
+                <div class="milestone-icon">🏆</div>
+                <div class="milestone-content">
+                    <div class="milestone-title">Private Program Invitation</div>
+                    <div class="milestone-description">
+                        Get invited to a private bug bounty program based on your reputation and skills. 
+                        This indicates you've reached an intermediate level.
+                    </div>
+                </div>
+                <div class="milestone-indicator">○</div>
+            </div>
+
+            <div class="milestone-item">
+                <div class="milestone-icon">🌟</div>
+                <div class="milestone-content">
+                    <div class="milestone-title">Hall of Fame Recognition</div>
+                    <div class="milestone-description">
+                        Get listed in a company's Hall of Fame for your contributions. 
+                        This represents significant impact and recognition in the community.
+                    </div>
+                </div>
+                <div class="milestone-indicator">○</div>
+            </div>
+        </section>
+
+        <!-- Practical Exercises -->
+        <section class="practical-exercises">
+            <h3 class="exercises-title">Hands-on Exercises</h3>
+            
+            <div class="exercise-item">
+                <div class="exercise-header">
+                    <div class="exercise-number">1</div>
+                    <div class="exercise-title">Subdomain Discovery Challenge</div>
+                </div>
+                <p class="exercise-description">
+                    Practice subdomain discovery on a target domain using multiple tools and compare results. 
+                    Learn the strengths and weaknesses of each approach.
+                </p>
+                
+                <div class="exercise-steps">
+                    <div class="steps-title">Exercise Steps:</div>
+                    <ul class="exercise-steps-list">
+                        <li>Choose a target domain (use your own or a public domain)</li>
+                        <li>Run Subfinder: <code>subfinder -d target.com -all -o subfinder.txt</code></li>
+                        <li>Run Amass: <code>amass enum -d target.com -o amass.txt</code></li>
+                        <li>Compare results: <code>sort subfinder.txt amass.txt | uniq -d</code></li>
+                        <li>Check which tool found more unique subdomains</li>
+                        <li>Run httpx on combined results: <code>cat *.txt | sort -u | httpx -o alive.txt</code></li>
+                    </ul>
+                </div>
+                
+                <div class="exercise-tools">
+                    <div class="tools-title">Tools Needed:</div>
+                    <div class="tools-list">
+                        <span class="tool-tag">Subfinder</span>
+                        <span class="tool-tag">Amass</span>
+                        <span class="tool-tag">httpx</span>
+                        <span class="tool-tag">Sort</span>
+                        <span class="tool-tag">Uniq</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="exercise-item">
+                <div class="exercise-header">
+                    <div class="exercise-number">2</div>
+                    <div class="exercise-title">Web Application Mapping</div>
+                </div>
+                <p class="exercise-description">
+                    Learn to map a web application's attack surface using Burp Suite. 
+                    Understand the application's structure and identify potential entry points.
+                </p>
+                
+                <div class="exercise-steps">
+                    <div class="steps-title">Exercise Steps:</div>
+                    <ul class="exercise-steps-list">
+                        <li>Set up Burp Suite proxy and configure browser</li>
+                        <li>Navigate through the target application manually</li>
+                        <li>Use Burp's Spider/Crawler to discover content</li>
+                        <li>Analyze the site map for interesting endpoints</li>
+                        <li>Identify all input parameters and forms</li>
+                        <li>Create a target map with potential attack vectors</li>
+                    </ul>
+                </div>
+                
+                <div class="exercise-tools">
+                    <div class="tools-title">Tools Needed:</div>
+                    <div class="tools-list">
+                        <span class="tool-tag">Burp Suite</span>
+                        <span class="tool-tag">Browser</span>
+                        <span class="tool-tag">FoxProxy</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="exercise-item">
+                <div class="exercise-header">
+                    <div class="exercise-number">3</div>
+                    <div class="exercise-title">SQL Injection Detection</div>
+                </div>
+                <p class="exercise-description">
+                    Practice detecting SQL injection vulnerabilities using both manual and automated methods. 
+                    Understand the difference between various SQL injection types.
+                </p>
+                
+                <div class="exercise-steps">
+                    <div class="steps-title">Exercise Steps:</div>
+                    <ul class="exercise-steps-list">
+                        <li>Set up DVWA or similar vulnerable application</li>
+                        <li>Manual testing with basic payloads: <code>' OR '1'='1</code></li>
+                        <li>Use SQLMap for automatic detection: <code>sqlmap -u "url" --dbs</code></li>
+                        <li>Compare manual vs automated results</li>
+                        <li>Try different injection types: Union, Boolean, Time-based</li>
+                        <li>Document findings and understand the root cause</li>
+                    </ul>
+                </div>
+                
+                <div class="exercise-tools">
+                    <div class="tools-title">Tools Needed:</div>
+                    <div class="tools-list">
+                        <span class="tool-tag">DVWA</span>
+                        <span class="tool-tag">SQLMap</span>
+                        <span class="tool-tag">Burp Suite</span>
+                        <span class="tool-tag">Browser</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="exercise-item">
+                <div class="exercise-header">
+                    <div class="exercise-number">4</div>
+                    <div class="exercise-title">Report Writing Practice</div>
+                </div>
+                <p class="exercise-description">
+                    Practice writing clear, professional bug reports. Good communication is as important 
+                    as finding vulnerabilities. Learn to document your findings effectively.
+                </p>
+                
+                <div class="exercise-steps">
+                    <div class="steps-title">Exercise Steps:</div>
+                    <ul class="exercise-steps-list">
+                        <li>Find a vulnerability in a practice application</li>
+                        <li>Create a detailed reproduction guide</li>
+                        <li>Include screenshots and proof of concept</li>
+                        <li>Assess the impact and suggest remediation</li>
+                        <li>Format the report professionally</li>
+                        <li>Get feedback from experienced hunters</li>
+                    </ul>
+                </div>
+                
+                <div class="exercise-tools">
+                    <div class="tools-title">Tools Needed:</div>
+                    <div class="tools-list">
+                        <span class="tool-tag">Screenshots</span>
+                        <span class="tool-tag">Screen Recording</span>
+                        <span class="tool-tag">Markdown</span>
+                        <span class="tool-tag">Burp Suite</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer style="background: var(--cyber-darker); border-top: 2px solid var(--cyber-cyan); padding: 40px 20px; text-align: center;">
+        <div style="max-width: 1200px; margin: 0 auto;">
+            <p style="color: var(--cyber-light-gray); font-size: 0.9rem;">
+                © 2024 Bug Bounty Hunter Guide. Empowering ethical hackers worldwide.
+            </p>
+            <p style="color: var(--cyber-cyan); font-size: 0.8rem; margin-top: 10px;">
+                Always practice responsible disclosure and follow program guidelines.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Show comparison function
+        function showComparison(category) {
+            const buttons = document.querySelectorAll('.selector-btn');
+            const contents = document.querySelectorAll('.comparison-content');
+            
+            // Update active button
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Show/hide content
+            contents.forEach(content => {
+                content.classList.remove('active');
+                if (content.id === category + '-comparison') {
+                    content.classList.add('active');
+                }
+            });
+        }
+
+        // Scroll to section function
+        function scrollToSection(sectionId) {
+            const element = document.getElementById(sectionId);
+            if (element) {
+                element.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        }
+
+        // Initialize page animations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate cards on scroll
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            // Apply animation to cards
+            const cards = document.querySelectorAll('.tool-learning-card, .stage-card, .milestone-item, .exercise-item');
+            cards.forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                card.style.transition = 'all 0.6s ease';
+                observer.observe(card);
+            });
+        });
+    </script>
+</body>
+</html>

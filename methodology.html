@@ -1,0 +1,2779 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bug Bounty Methodology - Complete Guide</title>
+    <meta name="description" content="Master the systematic approach to bug bounty hunting. Learn reconnaissance, discovery, testing, and reporting phases with proven techniques.">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Core Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.12/typed.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    
+    <style>
+        /* Import cyberpunk theme */
+        :root {
+            --cyber-dark: #0a0a0a;
+            --cyber-darker: #050505;
+            --cyber-cyan: #00ffff;
+            --cyber-magenta: #ff00ff;
+            --cyber-green: #00ff00;
+            --cyber-orange: #ff6600;
+            --cyber-purple: #8a2be2;
+            --cyber-gray: #333333;
+            --cyber-light-gray: #666666;
+            --cyber-white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier Prime', monospace;
+            background: var(--cyber-dark);
+            color: var(--cyber-white);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        .cyber-nav {
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(15px);
+            border-bottom: 2px solid var(--cyber-cyan);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 15px 0;
+            box-shadow: 0 2px 20px rgba(0, 255, 255, 0.3);
+        }
+
+        .cyber-nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .cyber-nav a {
+            color: var(--cyber-white);
+            text-decoration: none;
+            text-transform: uppercase;
+            font-weight: bold;
+            position: relative;
+            padding: 8px 16px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+
+        .cyber-nav a:hover, .cyber-nav a.active {
+            color: var(--cyber-cyan);
+            text-shadow: 0 0 15px var(--cyber-cyan);
+            transform: translateY(-2px);
+        }
+
+        .cyber-nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--cyber-cyan);
+            transition: width 0.3s ease;
+        }
+
+        .cyber-nav a:hover::after, .cyber-nav a.active::after {
+            width: 100%;
+        }
+
+        /* Header */
+        .page-header {
+            background: linear-gradient(135deg, var(--cyber-darker), var(--cyber-dark));
+            padding: 120px 20px 60px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 25% 45%, rgba(0,255,255,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 55%, rgba(255,0,255,0.1) 0%, transparent 50%);
+        }
+
+        .page-title {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 900;
+            color: var(--cyber-cyan);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px var(--cyber-cyan);
+            position: relative;
+            z-index: 2;
+        }
+
+        .page-subtitle {
+            font-size: clamp(1rem, 3vw, 1.3rem);
+            color: var(--cyber-light-gray);
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 60px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Methodology Overview */
+        .methodology-overview {
+            margin-bottom: 80px;
+            text-align: center;
+        }
+
+        .overview-title {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(2rem, 5vw, 3rem);
+            color: var(--cyber-cyan);
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 20px var(--cyber-cyan);
+        }
+
+        .methodology-flow {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin: 50px 0;
+        }
+
+        .flow-card {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--cyber-cyan);
+            border-radius: 15px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .flow-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 255, 255, 0.3);
+        }
+
+        .flow-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cyber-cyan), var(--cyber-magenta), var(--cyber-cyan));
+            animation: scan-line 2s linear infinite;
+        }
+
+        @keyframes scan-line {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .flow-number {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--cyber-magenta);
+            margin-bottom: 15px;
+            text-shadow: 0 0 20px var(--cyber-magenta);
+        }
+
+        .flow-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.4rem;
+            color: var(--cyber-cyan);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .flow-description {
+            color: var(--cyber-light-gray);
+            line-height: 1.6;
+        }
+
+        /* Phase Sections */
+        .phase-section {
+            margin-bottom: 100px;
+        }
+
+        .phase-header {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--cyber-cyan);
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .phase-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cyber-cyan), var(--cyber-magenta));
+            animation: scan-line 2s linear infinite;
+        }
+
+        .phase-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, var(--cyber-cyan), var(--cyber-magenta));
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--cyber-dark);
+            font-weight: bold;
+        }
+
+        .phase-info h2 {
+            font-family: 'Orbitron', monospace;
+            font-size: 2rem;
+            color: var(--cyber-cyan);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .phase-info p {
+            color: var(--cyber-light-gray);
+            font-size: 1.1rem;
+        }
+
+        /* Techniques Grid */
+        .techniques-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .technique-card {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--cyber-magenta);
+            border-radius: 15px;
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .technique-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(255, 0, 255, 0.2);
+        }
+
+        .technique-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cyber-magenta), var(--cyber-cyan));
+            animation: scan-line 2s linear infinite;
+        }
+
+        .technique-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.3rem;
+            color: var(--cyber-magenta);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .technique-description {
+            color: var(--cyber-light-gray);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .technique-tools {
+            margin-bottom: 20px;
+        }
+
+        .tools-label {
+            color: var(--ber-cyan);
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .tools-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tool-tag {
+            background: rgba(0, 255, 255, 0.2);
+            border: 1px solid var(--cyber-cyan);
+            color: var(--cyber-cyan);
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .technique-example {
+            background: var(--cyber-darker);
+            border: 1px solid var(--cyber-gray);
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier Prime', monospace;
+            font-size: 0.9rem;
+            color: var(--cyber-green);
+            margin-top: 15px;
+            overflow-x: auto;
+        }
+
+        .example-label {
+            color: var(--cyber-magenta);
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        /* Interactive Terminal */
+        .terminal-section {
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid var(--cyber-green);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 50px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .terminal-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cyber-green), var(--cyber-cyan));
+            animation: scan-line 2s linear infinite;
+        }
+
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .terminal-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--cyber-green);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--cyber-dark);
+        }
+
+        .terminal-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.4rem;
+            color: var(--cyber-green);
+            text-transform: uppercase;
+        }
+
+        .terminal-window {
+            background: var(--cyber-darker);
+            border: 1px solid var(--cyber-gray);
+            border-radius: 8px;
+            padding: 20px;
+            font-family: 'Courier Prime', monospace;
+            min-height: 300px;
+            position: relative;
+        }
+
+        .terminal-controls {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .terminal-btn {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .terminal-btn.close { background: #ff5f56; }
+        .terminal-btn.minimize { background: #ffbd2e; }
+        .terminal-btn.maximize { background: #27ca3f; }
+
+        .terminal-content {
+            margin-top: 30px;
+            color: var(--cyber-white);
+            line-height: 1.5;
+        }
+
+        .terminal-line {
+            margin-bottom: 8px;
+        }
+
+        .terminal-prompt {
+            color: var(--cyber-green);
+            font-weight: bold;
+        }
+
+        .terminal-command {
+            color: var(--cyber-cyan);
+        }
+
+        .terminal-output {
+            color: var(--cyber-light-gray);
+            margin-left: 20px;
+        }
+
+        .terminal-cursor {
+            display: inline-block;
+            width: 8px;
+            height: 16px;
+            background: var(--cyber-cyan);
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        /* Progress Tracker */
+        .progress-tracker {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--cyber-purple);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 50px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-tracker::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cyber-purple), var(--cyber-cyan));
+            animation: scan-line 2s linear infinite;
+        }
+
+        .progress-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            color: var(--cyber-purple);
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .progress-phases {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .progress-phase {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            border: 1px solid var(--cyber-gray);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .progress-phase:hover {
+            border-color: var(--cyber-cyan);
+            background: rgba(0, 255, 255, 0.1);
+        }
+
+        .progress-phase.completed {
+            border-color: var(--cyber-green);
+            background: rgba(0, 255, 0, 0.1);
+        }
+
+        .progress-phase.active {
+            border-color: var(--cyber-cyan);
+            background: rgba(0, 255, 255, 0.2);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        }
+
+        .phase-progress-icon {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto 15px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .progress-phase.completed .phase-progress-icon {
+            background: var(--cyber-green);
+            color: var(--cyber-dark);
+        }
+
+        .progress-phase.active .phase-progress-icon {
+            background: var(--cyber-cyan);
+            color: var(--cyber-dark);
+            animation: pulse 2s infinite;
+        }
+
+        .progress-phase:not(.completed):not(.active) .phase-progress-icon {
+            background: var(--cyber-gray);
+            color: var(--cyber-light-gray);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .phase-progress-name {
+            font-weight: bold;
+            color: var(--cyber-white);
+            margin-bottom: 5px;
+        }
+
+        .phase-progress-desc {
+            font-size: 0.9rem;
+            color: var(--cyber-light-gray);
+        }
+
+        /* Buttons */
+        .cyber-btn {
+            background: linear-gradient(45deg, var(--cyber-cyan), var(--cyber-magenta));
+            border: 2px solid var(--cyber-cyan);
+            color: var(--cyber-dark);
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 15px 30px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            font-family: 'Courier Prime', monospace;
+            font-size: 14px;
+            letter-spacing: 1px;
+            border-radius: 5px;
+            margin: 10px;
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .cyber-btn:hover {
+            background: linear-gradient(45deg, var(--cyber-magenta), var(--cyber-cyan));
+            box-shadow: 0 0 25px var(--cyber-cyan), 0 0 50px var(--cyber-cyan);
+            transform: translateY(-3px);
+        }
+
+        .cyber-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .cyber-btn:hover::before {
+            left: 100%;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .cyber-nav ul {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .phase-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+            
+            .techniques-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .methodology-flow {
+                grid-template-columns: 1fr;
+            }
+            
+            .progress-phases {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Utility Classes */
+        .text-cyan { color: var(--cyber-cyan); }
+        .text-magenta { color: var(--cyber-magenta); }
+        .text-green { color: var(--cyber-green); }
+        .text-orange { color: var(--cyber-orange); }
+        .text-purple { color: var(--cyber-purple); }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--cyber-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--cyber-cyan);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--cyber-magenta);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="cyber-nav">
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="getting-started.html">Getting Started</a></li>
+            <li><a href="methodology.html" class="active">Methodology</a></li>
+            <li><a href="tools.html">Tools</a></li>
+            <li><a href="platforms.html">Platforms</a></li>
+            <li><a href="learning-journey.html">Learning Journey</a></li>
+            <li><a href="community.html">Community</a></li>
+        </ul>
+    </nav>
+
+    <!-- Header -->
+    <header class="page-header">
+        <h1 class="page-title">Bug Bounty Methodology</h1>
+        <p class="page-subtitle">
+            Master the systematic approach to finding vulnerabilities. Learn proven techniques 
+            used by successful bug bounty hunters worldwide.
+        </p>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Methodology Overview -->
+        <section class="methodology-overview">
+            <h2 class="overview-title">The Four-Phase Approach</h2>
+            <p style="text-align: center; color: var(--cyber-light-gray); margin-bottom: 50px; font-size: 1.1rem;">
+                Every successful bug bounty hunt follows this systematic approach. Click on each phase to learn more:
+            </p>
+            
+            <div class="methodology-flow">
+                <div class="flow-card" onclick="scrollToPhase('reconnaissance')">
+                    <div class="flow-number">01</div>
+                    <h3 class="flow-title">Reconnaissance</h3>
+                    <p class="flow-description">
+                        Gather comprehensive information about your target. The more you know, 
+                        the better your chances of finding unique vulnerabilities.
+                    </p>
+                </div>
+
+                <div class="flow-card" onclick="scrollToPhase('discovery')">
+                    <div class="flow-number">02</div>
+                    <h3 class="flow-title">Discovery</h3>
+                    <p class="flow-description">
+                        Identify live assets, services, and potential attack vectors. 
+                        Map out the complete attack surface of your target.
+                    </p>
+                </div>
+
+                <div class="flow-card" onclick="scrollToPhase('testing')">
+                    <div class="flow-number">03</div>
+                    <h3 class="flow-title">Testing</h3>
+                    <p class="flow-description">
+                        Systematically test for vulnerabilities using both automated tools 
+                        and manual techniques. Focus on business logic flaws.
+                    </p>
+                </div>
+
+                <div class="flow-card" onclick="scrollToPhase('reporting')">
+                    <div class="flow-number">04</div>
+                    <h3 class="flow-title">Reporting</h3>
+                    <p class="flow-description">
+                        Document your findings with clear proof of concepts. 
+                        A good report can make the difference between acceptance and rejection.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Progress Tracker -->
+        <section class="progress-tracker">
+            <h3 class="progress-title">Methodology Progress Tracker</h3>
+            <div class="progress-phases">
+                <div class="progress-phase completed" onclick="togglePhase('reconnaissance')">
+                    <div class="phase-progress-icon">✓</div>
+                    <div class="phase-progress-name">Reconnaissance</div>
+                    <div class="phase-progress-desc">Information Gathering</div>
+                </div>
+                <div class="progress-phase active" onclick="togglePhase('discovery')">
+                    <div class="phase-progress-icon">02</div>
+                    <div class="phase-progress-name">Discovery</div>
+                    <div class="phase-progress-desc">Asset Mapping</div>
+                </div>
+                <div class="progress-phase" onclick="togglePhase('testing')">
+                    <div class="phase-progress-icon">03</div>
+                    <div class="phase-progress-name">Testing</div>
+                    <div class="phase-progress-desc">Vulnerability Analysis</div>
+                </div>
+                <div class="progress-phase" onclick="togglePhase('reporting')">
+                    <div class="phase-progress-icon">04</div>
+                    <div class="phase-progress-name">Reporting</div>
+                    <div class="phase-progress-desc">Documentation</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Phase 1: Reconnaissance -->
+        <section id="reconnaissance" class="phase-section">
+            <div class="phase-header">
+                <div class="phase-icon">🔍</div>
+                <div class="phase-info">
+                    <h2>Phase 1: Reconnaissance</h2>
+                    <p>The foundation of every successful bug bounty hunt. Gather as much information as possible about your target.</p>
+                </div>
+            </div>
+
+            <div class="techniques-grid">
+                <div class="technique-card">
+                    <h3 class="technique-title">Subdomain Enumeration</h3>
+                    <p class="technique-description">
+                        Discover all subdomains associated with your target. Subdomains often host forgotten services, 
+                        development environments, or less-secured applications.
+                    </p>
+                    <div class="technique-tools">
+                        <span class="tools-label">Tools:</span>
+                        <div class="tools-list">
+                            <span class="tool-tag">Subfinder</span>
+                            <span class="tool-tag">Amass</span>
+                            <span class="tool-tag">Assetfinder</span>
+                            <span class="tool-tag">Knockpy</span>
+                        </div>
+                    </div>
+                    <div class="technique-example">
+                        <div class="example-label">Example Commands:</div>
+                        <div>subfinder -d target.com -all</div>
+                        <div>amass enum -d target.com -o subdomains.txt</div>
+                        <div>assetfinder --subs-only target.com</div>
+                    </div>
+                </div>
+
+                <div class="technique-card">
+                    <h3 class="technique-title">Port Scanning</h3>
+                    <p class="technique-description">
+                        Identify open ports and running services. Non-standard ports often reveal interesting 
+                        services like development tools, admin panels, or backup services.
+                    </p>
+                    <div class="technique-tools">
+                        <span class="tools-label">Tools:</span>
+                        <div class="tools-list">
+                            <span class="tool-tag">Nmap</span>
+                            <span class="tool-tag">Masscan</span>
+                            <span class="tool-tag">Naabu</span>
+                            <span class="tool-tag">Rustscan</span>
+                        </div>
+                    </div>
+                    <div class="technique-example">
+                        <div class="example-label">Example Commands:</div>
+                        <div>nmap -sV -p- target.com</div>
+                        <div>nmap -sC -sV -p 1-10000 target.com</div>
+                        <div>masscan -p1-65535 target.com --rate=1000</div>
+                    </div>
+                </div>
+
+                <div class="technique-card">
+                    <h3 class="technique-title">OSINT Gathering</h3>
+                    <p class="technique-description">
+                        Use open-source intelligence to find information about the target. This includes 
+                        employee emails, technology stacks, and infrastructure details.
+                    </p>
+                    <div class="technique-tools">
+                        <span class="tools-label">Tools:</span>
+                        <div class="tools-list">
+                            <span class="tool-tag">Maltego</span>
+                            <span class="tool-tag">Shodan</span>
+                            <span class="tool-tag">Censys</span>
+                            <span class="tool-tag">theHarvester</span>
+                        </div>
+                    </div>
+                    <div class="technique-example">
+                        <div class="example-label">Example Commands:</div>
+                        <div>theHarvester -d target.com -b all</div>
+                        <div>shodan search org:"Target Corp"</div>
+                        <div>maltego -t target.com</div>
+                    </div>
+                </div>
+
+                <div class="technique-card">
+                    <h3 class="technique-title">Directory Brute-forcing</h3>
+                    <p class="technique-description">
+                        Discover hidden directories and files. Many applications have admin panels, 
+                        backup files, or debug endpoints that aren't publicly linked.
+                    </p>
+                    <div class="technique-tools">
+                        <span class="tools-label">Tools:</span>
+                        <div class="tools-list">
+                            <span class="tool-tag">Gobuster</span>
+                            <span class="tool-tag">Dirb</span>
+                            <span class="tool-tag">Ffuf</span>
+                            <span class="tool-tag">Dirsearch</span>
+                        </div>
+                    </div>
+                    <div class="technique-example">
+                        <div class="example-label">Example Commands:</div>
+                        <div>gobuster dir -u target.com -w wordlist.txt</div>
+                        <div>ffuf -w wordlist.txt -u https://target.com/FUZZ</div>
+                        <div>dirb https://target.com/ wordlist.txt</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Phase 2: Discovery -->
+        <section id="discovery" class="phase-section">
+            <div class="phase-header">
+                <div class="phase-icon">🎯</div>
+                <div class="phase-info">
+                    <h2>Phase 2: Discovery</h2>
+                    <p>Identify live assets, analyze technologies, and map the attack surface. Focus on what can be attacked.</p>
+                </div>
+            </div>
+
+            <div class="techniques-grid">
+                <div class="technique-card">
+                    <h3 class="technique-title">HTTP Probing</h3>
+                    <p class="technique-description">
+                        Check which subdomains are actually live and responding. Filter out dead hosts 
+                        to focus your testing on active services.
+                    </p>
+                    <div class="technique-tools">
+                        <span class="tools-label">Tools:</span>
+                        <div class="tools-list">
+                            <span class="tool-tag">httpx</span>
+                            <span class="tool-tag">httprobe</span>
+                            <span class="tool-tag">EyeWitness</span>
+                            <span class="tool-tag">Aquatone</span>
+                        </div>
+                    </div>
+                    <div class="technique-example">
+                        <div class="example-label">Example Commands:</div>
+                        <div>httpx -l subdomains.txt -silent</div>
+                        <div>httprobe < subdomains.txt</div>
+                        <div>eyewitness --web -f subdomains.txt</div>
+                    </div>
+                </div>
+
+                <div class="technique-card">
+                    <h3 class="technique-title">Technology Stack Analysis</h3>
+                    <p class="technique-description">
+                        Identify the technologies used by the target. Knowing the stack helps you 
+                        focus on technology-specific vulnerabilities and exploits.
+                    </p>
+                    <div class="technique-tools">
+                        <span class="tools-label">Tools:</span>
+                        <div class="tools-list">
+                            <span class="tool-tag">Wappalyzer</span>
+                            <span class="tool-tag">BuiltWith</span>
+                            <span class="tool-tag">WhatWeb</span>
+                            <span class="tool-tag">Nuclei</span>
+                        </div>
+                    </div>
+                    <div class="technique-example">
+                        <div class="example-label">Example Commands:</div>
+                        <div>whatweb target.com</div>
+                        <div>nuclei -l targets.txt -t technologies/</div>
+                        <div>wappalyzer https://target.com</div>
+                    </div>
+                </div>
+
+                <div class="technique-card">
+                    <h3 class="technique-title">JavaScript Analysis</h3>
+                    <p class="technique-description">
+                        Analyze JavaScript files for hidden endpoints, API calls, and sensitive information. 
+                        Modern SPAs often leak valuable information in client-side code.
+                    </p>
+                    <div class="technique-tools">
+                        <span class="tools-label">Tools:</span>
+                        <div class="tools-list">
+                            <span class="tool-tag">JS-Scan</span>
+                            <span class="tool-tag">LinkFinder</span>
+                            <span class="tool-tag">SecretFinder</span>
+                            <span class="tool-tag">Grep</span>
+                        </div>
+                    </div>
+                    <div class="technique-example">
+                        <div class="example-label">Example Commands:</div>
+                        <div>grep -r "api/" *.js</div>
+                        <div>python3 linkfinder.py -i https://target.com</div>
+                        <div>secretfinder -i target.com -o cli</div>
+                    </div>
+                </div>
+
+                <div class="technique-card">
+                    <h3 class="technique-title">API Discovery</h3>
+                    <p class="technique-description">
+                        Find API endpoints that might not be documented. APIs often have different 
+                        security controls and can be a rich source of vulnerabilities.
+                    </p>
+                    <div class="technique-tools">
+                        <span class="tools-label">Tools:</span>
+                        <div class="tools-list">
+                            <span class="tool-tag">Kiterunner</span>
+                            <span class="tool-tag">Arjun</span>
+                            <span class="tool-tag">Postman</span>
+                            <span class="tool-tag">Insomnia</span>
+                        </div>
+                    </div>
+                    <div class="technique-example">
+                        <div class="example-label">Example Commands:</div>
+                        <div>arjun -u https://target.com/api/</div>
+                        <div>kr scan api.txt -w routes.txt</div>
+                        <div>ffuf -w api-wordlist.txt -u https://target.com/FUZZ</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Terminal Demo -->
+        <section class="terminal-section">
+            <div class="terminal-header">
+                <div class="terminal-icon">$</div>
+                <h3 class="terminal-title">Live Reconnaissance Demo</h3>
+            </div>
+            <div class="terminal-window">
+                <div class="terminal-controls">
+                    <div class="terminal-btn close"></div>
+                    <div class="terminal-btn minimize"></div>
+                    <div class="terminal-btn maximize"></div>
+                </div>
+                <div class="terminal-content" id="terminalContent">
+                    <div class="terminal-line">
+                        <span class="terminal-prompt">$</span>
+                        <span class="terminal-command"> subfinder -d example.com -all -silent</span>
+                    </div>
+                    <div class="terminal-line terminal-output">blog.example.com</div>
+                    <div class="terminal-line terminal-output">api.example.com</div>
+                    <div class="terminal-line terminal-output">dev.example.com</div>
+                    <div class="terminal-line terminal-output">staging.example.com</div>
+                    <div class="terminal-line terminal-output">admin.example.com</div>
+                    <div class="terminal-line">
+                        <span class="terminal-prompt">$</span>
+                        <span class="terminal-command"> httpx -l subdomains.txt -silent</span>
+                    </div>
+                    <div class="terminal-line terminal-output">https://blog.example.com</div>
+                    <div class="terminal-line terminal-output">https://api.example.com</div>
+                    <div class="terminal-line terminal-output">https://dev.example.com [403]</div>
+                    <div class="terminal-line">
+                        <span class="terminal-prompt">$</span>
+                        <span class="terminal-command"> nmap -sV -p- api.example.com</span>
+                    </div>
+                    <div class="terminal-line terminal-output">PORT     STATE SERVICE VERSION</div>
+                    <div class="terminal-line terminal-output">80/tcp   open  http    nginx 1.18.0</div>
+                    <div class="terminal-line terminal-output">443/tcp  open  https   nginx 1.18.0</div>
+                    <div class="terminal-line terminal-output">8080/tcp open  http    Apache Tomcat/Coyote JSP engine 1.1</div>
+                    <div class="terminal-line">
+                        <span class="terminal-prompt">$</span>
+                        <span class="terminal-cursor"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Phase 3: Testing -->
+        <section id="testing" class="phase-section">
+            <div class="phase-header">
+                <div class="phase-icon">⚔️</div>
+                <div class="phase-info">
+                    <h2>Phase 3: Testing</h2>
+                    <p>Systematically test for vulnerabilities. Combine automated scanning with manual testing for best results.</p>
+                </div>
+            </div>
+
+            <div class="techniques-grid">
+                <div class="technique-card">
+                    <h3 class="technique-title">Cross-Site Scripting (XSS)</h3>
+                    <p class="technique-description">
+                        Test for both reflected and stored XSS vulnerabilities. Modern applications 
+                        often have complex input validation that can be bypassed.
+                    </p>
+                    <div class="technique-tools">
+                        <span class="tools-label">Tools:</span>
+                        <div class="tools-list">
+                            <span class="tool-tag">XSStrike</span>
+                            <span class="tool-tag">XSSer</span>
+                            <span class="tool-tag">Burp Suite</span>
+                            <span class="tool-tag">Dalfox</span>
+                        </div>
+                    </div>
+                    <div class="technique-example">
+                        <div class="example-label">Testing Approach:</div>
+                        <div>1. Test all input fields and parameters</div>
+                        <div>2. Try different XSS payloads</div>
+                        <div>3. Check for WAF bypass techniques</div>
+                        <div>4. Test DOM-based XSS in JavaScript</div>
+                    </div>
+                </div>
+
+                <div class="technique-card">
+                    <h3 class="technique-title">SQL Injection</h3>
+                    <p class="technique-description">
+                        Test for SQL injection in all database interactions. Even with modern frameworks, 
+                        SQL injection remains a common vulnerability.
+                    </p>
+                    <div class="technique-tools">
+                        <span class="tools-label">Tools:</span>
+                        <div class="tools-list">
+                            <span class="tool-tag">SQLMap</span>
+                            <span class="tool-tag">Burp Suite</span>
+                            <span class="tool-tag">NoSQLMap</span>
+                            <span class="tool-tag">Manual Testing</span>
+                        </div>
+                    </div>
+                    <div class="technique-example">
+                        <div class="example-label">Testing Approach:</div>
+                        <div>1. Test all parameters and form fields</div>
+                        <div>2. Use error-based detection</div>
+                        <div>3. Try time-based blind SQLi</div>
+                        <div>4. Test different database types</div>
+                    </div>
+                </div>
+
+                <div class="technique-card">
+                    <h3 class="technique-title">Business Logic Testing</h3>
+                    <p class="technique-description">
+                        Test the application's business logic for flaws. These vulnerabilities are 
+                        often overlooked by automated tools and can have high impact.
+                    </p>
+                    <div class="technique-tools">
+                        <span class="tools-label">Tools:</span>
+                        <div class="tools-list">
+                            <span class="tool-tag">Manual Testing</span>
+                            <span class="tool-tag">Burp Suite</span>
+                            <span class="tool-tag">Postman</span>
+                            <span class="tool-tag">Custom Scripts</span>
+                        </div>
+                    </div>
+                    <div class="technique-example">
+                        <div class="example-label">Testing Areas:</div>
+                        <div>• Authentication bypass</div>
+                        <div>• Privilege escalation</div>
+                        <div>• Payment flow manipulation</div>
+                        <div>• Rate limiting bypass</div>
+                    </div>
+                </div>
+
+                <div class="technique-card">
+                    <h3 class="technique-title">Access Control Testing</h3>
+                    <p class="technique-description">
+                        Test for IDOR (Insecure Direct Object Reference) and other access control issues. 
+                        These are common in applications with complex user roles.
+                    </p>
+                    <div class="technique-tools">
+                        <span class="tools-label">Tools:</span>
+                        <div class="tools-list">
+                            <span class="tool-tag">Burp Suite</span>
+                            <span class="tool-tag">Custom Scripts</span>
+                            <span class="tool-tag">AutoRepeater</span>
+                            <span class="tool-tag">Manual Testing</span>
+                        </div>
+                    </div>
+                    <div class="technique-example">
+                        <div class="example-label">Testing Approach:</div>
+                        <div>1. Test with different user accounts</div>
+                        <div>2. Modify object IDs in requests</div>
+                        <div>3. Test horizontal/vertical privilege escalation</div>
+                        <div>4. Check for forced browsing</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Phase 4: Reporting -->
+        <section id="reporting" class="phase-section">
+            <div class="phase-header">
+                <div class="phase-icon">📝</div>
+                <div class="phase-info">
+                    <h2>Phase 4: Reporting</h2>
+                    <p>A good report can make the difference between a bounty and a rejection. Learn to document effectively.</p>
+                </div>
+            </div>
+
+            <div class="techniques-grid">
+                <div class="technique-card">
+                    <h3 class="technique-title">Report Structure</h3>
+                    <p class="technique-description">
+                        Follow a clear structure that makes it easy for triagers to understand and reproduce your finding.
+                    </p>
+                    <div class="technique-example">
+                        <div class="example-label">Essential Sections:</div>
+                        <div>1. <strong>Summary</strong> - Brief vulnerability overview</div>
+                        <div>2. <strong>Description</strong> - Technical details and impact</div>
+                        <div>3. <strong>Steps to Reproduce</strong> - Clear, numbered steps</div>
+                        <div>4. <strong>Proof of Concept</strong> - Screenshots, videos, payloads</div>
+                        <div>5. <strong>Impact Assessment</strong> - Business impact explanation</div>
+                        <div>6. <strong>Remediation</strong> - Suggested fix (optional)</div>
+                    </div>
+                </div>
+
+                <div class="technique-card">
+                    <h3 class="technique-title">Proof of Concept</h3>
+                    <p class="technique-description">
+                        Provide clear evidence that demonstrates the vulnerability. Visual proof is often more 
+                        convincing than written descriptions alone.
+                    </p>
+                    <div class="technique-example">
+                        <div class="example-label">Evidence Types:</div>
+                        <div>• Screenshots with annotations</div>
+                        <div>• Screen recordings (GIF/MP4)</div>
+                        <div>• Burp Suite request/response pairs</div>
+                        <div>• Custom exploit scripts</div>
+                        <div>• Log files and error messages</div>
+                    </div>
+                </div>
+
+                <div class="technique-card">
+                    <h3 class="technique-title">Severity Assessment</h3>
+                    <p class="technique-description">
+                        Accurately assess the severity of your finding. Understand CVSS scoring and 
+                        consider the business context of the vulnerability.
+                    </p>
+                    <div class="technique-example">
+                        <div class="example-label">Severity Factors:</div>
+                        <div>• Ease of exploitation</div>
+                        <div>• Authentication requirements</div>
+                        <div>• Potential impact (data, systems, users)</div>
+                        <div>• Business context and asset value</div>
+                        <div>• WAF/IDS bypass requirements</div>
+                    </div>
+                </div>
+
+                <div class="technique-card">
+                    <h3 class="technique-title">Communication Best Practices</h3>
+                    <p class="technique-description">
+                        Maintain professional communication throughout the disclosure process. 
+                        Good relationships lead to more opportunities and higher bounties.
+                    </p>
+                    <div class="technique-example">
+                        <div class="example-label">Do's and Don'ts:</div>
+                        <div>✅ Be patient and professional</div>
+                        <div>✅ Respond promptly to questions</div>
+                        <div>✅ Provide additional information when requested</div>
+                        <div>❌ Don't rush triagers or demand updates</div>
+                        <div>❌ Don't argue about severity ratings</div>
+                        <div>❌ Don't disclose vulnerabilities publicly</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Methodology Summary -->
+        <section style="background: rgba(0, 0, 0, 0.8); border: 2px solid var(--cyber-purple); border-radius: 15px; padding: 40px; margin: 60px 0; position: relative; overflow: hidden;">
+            <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--cyber-purple), var(--cyber-cyan)); animation: scan-line 2s linear infinite;"></div>
+            <h3 style="font-family: 'Orbitron', monospace; font-size: 1.8rem; color: var(--cyber-purple); margin-bottom: 25px; text-transform: uppercase; text-align: center;">Key Success Factors</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+                <div style="text-align: center; padding: 20px;">
+                    <div style="width: 60px; height: 60px; background: var(--cyber-cyan); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-size: 1.5rem; color: var(--cyber-dark);">🔄</div>
+                    <h4 style="color: var(--cyber-cyan); margin-bottom: 10px; font-family: 'Orbitron', monospace;">Consistency</h4>
+                    <p style="color: var(--cyber-light-gray);">Follow the methodology consistently. Don't skip phases or rush through reconnaissance.</p>
+                </div>
+                <div style="text-align: center; padding: 20px;">
+                    <div style="width: 60px; height: 60px; background: var(--cyber-magenta); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-size: 1.5rem; color: var(--cyber-dark);">📝</div>
+                    <h4 style="color: var(--cyber-magenta); margin-bottom: 10px; font-family: 'Orbitron', monospace;">Documentation</h4>
+                    <p style="color: var(--cyber-light-gray);">Keep detailed notes throughout the process. Good documentation leads to better reports.</p>
+                </div>
+                <div style="text-align: center; padding: 20px;">
+                    <div style="width: 60px; height: 60px; background: var(--cyber-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-size: 1.5rem; color: var(--cyber-dark);">🎯</div>
+                    <h4 style="color: var(--cyber-green); margin-bottom: 10px; font-family: 'Orbitron', monospace;">Focus</h4>
+                    <p style="color: var(--cyber-light-gray);">Spend quality time on each target. Deep understanding beats broad but shallow testing.</p>
+                </div>
+                <div style="text-align: center; padding: 20px;">
+                    <div style="width: 60px; height: 60px; background: var(--cyber-orange); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-size: 1.5rem; color: var(--cyber-dark);">📚</div>
+                    <h4 style="color: var(--cyber-orange); margin-bottom: 10px; font-family: 'Orbitron', monospace;">Learning</h4>
+                    <p style="color: var(--cyber-light-gray);">Continuously learn from write-ups, reports, and other hunters. The field evolves rapidly.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to Action -->
+        <section style="text-align: center; padding: 60px 20px; background: linear-gradient(135deg, rgba(0,255,255,0.05), rgba(255,0,255,0.05));">
+            <h2 style="font-family: 'Orbitron', monospace; font-size: 2.2rem; color: var(--cyber-cyan); margin-bottom: 25px; text-transform: uppercase;">Ready to Practice?</h2>
+            <p style="font-size: 1.2rem; color: var(--cyber-light-gray); margin-bottom: 40px; max-width: 600px; margin-left: auto; margin-right: auto;">
+                Now that you understand the methodology, it's time to explore the tools and platforms that will help you implement it effectively.
+            </p>
+            <div>
+                <a href="tools.html" class="cyber-btn">Explore Tools Arsenal</a>
+                <a href="platforms.html" class="cyber-btn">Compare Platforms</a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer style="background: var(--cyber-darker); border-top: 2px solid var(--cyber-cyan); padding: 40px 20px; text-align: center;">
+        <div style="max-width: 1200px; margin: 0 auto;">
+            <p style="color: var(--cyber-light-gray); font-size: 0.9rem;">
+                © 2024 Bug Bounty Hunter Guide. Empowering ethical hackers worldwide.
+            </p>
+            <p style="color: var(--cyber-cyan); font-size: 0.8rem; margin-top: 10px;">
+                Always practice responsible disclosure and follow program guidelines.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Scroll to phase function
+        function scrollToPhase(phaseId) {
+            const element = document.getElementById(phaseId);
+            if (element) {
+                element.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+                
+                // Highlight the phase briefly
+                element.style.boxShadow = '0 0 30px rgba(0, 255, 255, 0.5)';
+                setTimeout(() => {
+                    element.style.boxShadow = '';
+                }, 2000);
+            }
+        }
+
+        // Toggle phase in progress tracker
+        function togglePhase(phaseId) {
+            const phases = document.querySelectorAll('.progress-phase');
+            phases.forEach(phase => {
+                phase.classList.remove('active');
+                if (phase.classList.contains('completed')) {
+                    phase.classList.remove('completed');
+                }
+            });
+            
+            // Find and activate the clicked phase
+            const targetPhase = Array.from(phases).find(phase => 
+                phase.onclick.toString().includes(phaseId)
+            );
+            if (targetPhase) {
+                targetPhase.classList.add('active');
+                targetPhase.classList.add('completed');
+            }
+            
+            // Scroll to the phase
+            scrollToPhase(phaseId);
+        }
+
+        // Terminal animation
+        function animateTerminal() {
+            const terminal = document.getElementById('terminalContent');
+            const lines = terminal.querySelectorAll('.terminal-line');
+            
+            // Hide all lines initially
+            lines.forEach(line => {
+                line.style.opacity = '0';
+                line.style.transform = 'translateX(-20px)';
+            });
+            
+            // Animate lines one by one
+            let delay = 0;
+            lines.forEach(line => {
+                setTimeout(() => {
+                    line.style.transition = 'all 0.3s ease';
+                    line.style.opacity = '1';
+                    line.style.transform = 'translateX(0)';
+                }, delay);
+                delay += 300;
+            });
+        }
+
+        // Initialize animations when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate technique cards on scroll
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            // Apply animation to technique cards
+            const cards = document.querySelectorAll('.technique-card');
+            cards.forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                card.style.transition = 'all 0.6s ease';
+                observer.observe(card);
+            });
+            
+            // Start terminal animation after a delay
+            setTimeout(animateTerminal, 2000);
+        });
+
+        // Smooth scrolling for internal links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bug Bounty Methodology - Complete Guide</title>
+    <meta name="description" content="Master the systematic approach to bug bounty hunting. Learn reconnaissance, discovery, testing, and reporting phases with proven techniques.">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Core Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.12/typed.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    
+    <style>
+        /* Import cyberpunk theme */
+        :root {
+            --cyber-dark: #0a0a0a;
+            --cyber-darker: #050505;
+            --cyber-cyan: #00ffff;
+            --cyber-magenta: #ff00ff;
+            --cyber-green: #00ff00;
+            --cyber-orange: #ff6600;
+            --cyber-purple: #8a2be2;
+            --cyber-gray: #333333;
+            --cyber-light-gray: #666666;
+            --cyber-white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier Prime', monospace;
+            background: var(--cyber-dark);
+            color: var(--cyber-white);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        .cyber-nav {
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(15px);
+            border-bottom: 2px solid var(--cyber-cyan);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 15px 0;
+            box-shadow: 0 2px 20px rgba(0, 255, 255, 0.3);
+        }
+
+        .cyber-nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .cyber-nav a {
+            color: var(--cyber-white);
+            text-decoration: none;
+            text-transform: uppercase;
+            font-weight: bold;
+            position: relative;
+            padding: 8px 16px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+
+        .cyber-nav a:hover, .cyber-nav a.active {
+            color: var(--cyber-cyan);
+            text-shadow: 0 0 15px var(--cyber-cyan);
+            transform: translateY(-2px);
+        }
+
+        .cyber-nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--cyber-cyan);
+            transition: width 0.3s ease;
+        }
+
+        .cyber-nav a:hover::after, .cyber-nav a.active::after {
+            width: 100%;
+        }
+
+        /* Header */
+        .page-header {
+            background: linear-gradient(135deg, var(--cyber-darker), var(--cyber-dark));
+            padding: 120px 20px 60px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 25% 45%, rgba(0,255,255,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 55%, rgba(255,0,255,0.1) 0%, transparent 50%);
+        }
+
+        .page-title {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 900;
+            color: var(--cyber-cyan);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px var(--cyber-cyan);
+            position: relative;
+            z-index: 2;
+        }
+
+        .page-subtitle {
+            font-size: clamp(1rem, 3vw, 1.3rem);
+            color: var(--cyber-light-gray);
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 60px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Methodology Overview */
+        .methodology-overview {
+            margin-bottom: 80px;
+            text-align: center;
+        }
+
+        .overview-title {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(2rem, 5vw, 3rem);
+            color: var(--cyber-cyan);
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 20px var(--cyber-cyan);
+        }
+
+        .methodology-flow {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin: 50px 0;
+        }
+
+        .flow-card {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--cyber-cyan);
+            border-radius: 15px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .flow-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 255, 255, 0.3);
+        }
+
+        .flow-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cyber-cyan), var(--cyber-magenta), var(--cyber-cyan));
+            animation: scan-line 2s linear infinite;
+        }
+
+        @keyframes scan-line {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .flow-number {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--cyber-magenta);
+            margin-bottom: 15px;
+            text-shadow: 0 0 20px var(--cyber-magenta);
+        }
+
+        .flow-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.4rem;
+            color: var(--cyber-cyan);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .flow-description {
+            color: var(--cyber-light-gray);
+            line-height: 1.6;
+        }
+
+        /* Phase Sections */
+        .phase-section {
+            margin-bottom: 100px;
+        }
+
+        .phase-header {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--cyber-cyan);
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .phase-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cyber-cyan), var(--cyber-magenta));
+            animation: scan-line 2s linear infinite;
+        }
+
+        .phase-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, var(--cyber-cyan), var(--cyber-magenta));
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--cyber-dark);
+            font-weight: bold;
+        }
+
+        .phase-info h2 {
+            font-family: 'Orbitron', monospace;
+            font-size: 2rem;
+            color: var(--cyber-cyan);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .phase-info p {
+            color: var(--cyber-light-gray);
+            font-size: 1.1rem;
+        }
+
+        /* Techniques Grid */
+        .techniques-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .technique-card {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--cyber-magenta);
+            border-radius: 15px;
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .technique-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(255, 0, 255, 0.2);
+        }
+
+        .technique-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cyber-magenta), var(--cyber-cyan));
+            animation: scan-line 2s linear infinite;
+        }
+
+        .technique-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.3rem;
+            color: var(--cyber-magenta);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .technique-description {
+            color: var(--cyber-light-gray);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .technique-tools {
+            margin-bottom: 20px;
+        }
+
+        .tools-label {
+            color: var(--ber-cyan);
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .tools-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tool-tag {
+            background: rgba(0, 255, 255, 0.2);
+            border: 1px solid var(--cyber-cyan);
+            color: var(--cyber-cyan);
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .technique-example {
+            background: var(--cyber-darker);
+            border: 1px solid var(--cyber-gray);
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier Prime', monospace;
+            font-size: 0.9rem;
+            color: var(--cyber-green);
+            margin-top: 15px;
+            overflow-x: auto;
+        }
+
+        .example-label {
+            color: var(--cyber-magenta);
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        /* Interactive Terminal */
+        .terminal-section {
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid var(--cyber-green);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 50px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .terminal-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cyber-green), var(--cyber-cyan));
+            animation: scan-line 2s linear infinite;
+        }
+
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .terminal-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--cyber-green);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--cyber-dark);
+        }
+
+        .terminal-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.4rem;
+            color: var(--cyber-green);
+            text-transform: uppercase;
+        }
+
+        .terminal-window {
+            background: var(--cyber-darker);
+            border: 1px solid var(--cyber-gray);
+            border-radius: 8px;
+            padding: 20px;
+            font-family: 'Courier Prime', monospace;
+            min-height: 300px;
+            position: relative;
+        }
+
+        .terminal-controls {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .terminal-btn {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .terminal-btn.close { background: #ff5f56; }
+        .terminal-btn.minimize { background: #ffbd2e; }
+        .terminal-btn.maximize { background: #27ca3f; }
+
+        .terminal-content {
+            margin-top: 30px;
+            color: var(--cyber-white);
+            line-height: 1.5;
+        }
+
+        .terminal-line {
+            margin-bottom: 8px;
+        }
+
+        .terminal-prompt {
+            color: var(--cyber-green);
+            font-weight: bold;
+        }
+
+        .terminal-command {
+            color: var(--cyber-cyan);
+        }
+
+        .terminal-output {
+            color: var(--cyber-light-gray);
+            margin-left: 20px;
+        }
+
+        .terminal-cursor {
+            display: inline-block;
+            width: 8px;
+            height: 16px;
+            background: var(--cyber-cyan);
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        /* Progress Tracker */
+        .progress-tracker {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--cyber-purple);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 50px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-tracker::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cyber-purple), var(--cyber-cyan));
+            animation: scan-line 2s linear infinite;
+        }
+
+        .progress-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            color: var(--cyber-purple);
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .progress-phases {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .progress-phase {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            border: 1px solid var(--cyber-gray);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .progress-phase:hover {
+            border-color: var(--cyber-cyan);
+            background: rgba(0, 255, 255, 0.1);
+        }
+
+        .progress-phase.completed {
+            border-color: var(--cyber-green);
+            background: rgba(0, 255, 0, 0.1);
+        }
+
+        .progress-phase.active {
+            border-color: var(--cyber-cyan);
+            background: rgba(0, 255, 255, 0.2);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        }
+
+        .phase-progress-icon {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto 15px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .progress-phase.completed .phase-progress-icon {
+            background: var(--cyber-green);
+            color: var(--cyber-dark);
+        }
+
+        .progress-phase.active .phase-progress-icon {
+            background: var(--cyber-cyan);
+            color: var(--cyber-dark);
+            animation: pulse 2s infinite;
+        }
+
+        .progress-phase:not(.completed):not(.active) .phase-progress-icon {
+            background: var(--cyber-gray);
+            color: var(--cyber-light-gray);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .phase-progress-name {
+            font-weight: bold;
+            color: var(--cyber-white);
+            margin-bottom: 5px;
+        }
+
+        .phase-progress-desc {
+            font-size: 0.9rem;
+            color: var(--cyber-light-gray);
+        }
+
+        /* Buttons */
+        .cyber-btn {
+            background: linear-gradient(45deg, var(--cyber-cyan), var(--cyber-magenta));
+            border: 2px solid var(--cyber-cyan);
+            color: var(--cyber-dark);
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 15px 30px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            font-family: 'Courier Prime', monospace;
+            font-size: 14px;
+            letter-spacing: 1px;
+            border-radius: 5px;
+            margin: 10px;
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .cyber-btn:hover {
+            background: linear-gradient(45deg, var(--cyber-magenta), var(--cyber-cyan));
+            box-shadow: 0 0 25px var(--cyber-cyan), 0 0 50px var(--cyber-cyan);
+            transform: translateY(-3px);
+        }
+
+        .cyber-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .cyber-btn:hover::before {
+            left: 100%;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .cyber-nav ul {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .phase-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+            
+            .techniques-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .methodology-flow {
+                grid-template-columns: 1fr;
+            }
+            
+            .progress-phases {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Utility Classes */
+        .text-cyan { color: var(--cyber-cyan); }
+        .text-magenta { color: var(--cyber-magenta); }
+        .text-green { color: var(--cyber-green); }
+        .text-orange { color: var(--cyber-orange); }
+        .text-purple { color: var(--cyber-purple); }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--cyber-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--cyber-cyan);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--cyber-magenta);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="cyber-nav">
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="getting-started.html">Getting Started</a></li>
+            <li><a href="methodology.html" class="active">Methodology</a></li>
+            <li><a href="tools.html">Tools</a></li>
+            <li><a href="platforms.html">Platforms</a></li>
+            <li><a href="learning-journey.html">Learning Journey</a></li>
+            <li><a href="community.html">Community</a></li>
+        </ul>
+    </nav>
+
+    <!-- Header -->
+    <header class="page-header">
+        <h1 class="page-title">Bug Bounty Methodology</h1>
+        <p class="page-subtitle">
+            Master the systematic approach to finding vulnerabilities. Learn proven techniques 
+            used by successful bug bounty hunters worldwide.
+        </p>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Methodology Overview -->
+        <section class="methodology-overview">
+            <h2 class="overview-title">The Four-Phase Approach</h2>
+            <p style="text-align: center; color: var(--cyber-light-gray); margin-bottom: 50px; font-size: 1.1rem;">
+                Every successful bug bounty hunt follows this systematic approach. Click on each phase to learn more:
+            </p>
+            
+            <div class="methodology-flow">
+                <div class="flow-card" onclick="scrollToPhase('reconnaissance')">
+                    <div class="flow-number">01</div>
+                    <h3 class="flow-title">Reconnaissance</h3>
+                    <p class="flow-description">
+                        Gather comprehensive information about your target. The more you know, 
+                        the better your chances of finding unique vulnerabilities.
+                    </p>
+                </div>
+
+                <div class="flow-card" onclick="scrollToPhase('discovery')">
+                    <div class="flow-number">02</div>
+                    <h3 class="flow-title">Discovery</h3>
+                    <p class="flow-description">
+                        Identify live assets, services, and potential attack vectors. 
+                        Map out the complete attack surface of your target.
+                    </p>
+                </div>
+
+                <div class="flow-card" onclick="scrollToPhase('testing')">
+                    <div class="flow-number">03</div>
+                    <h3 class="flow-title">Testing</h3>
+                    <p class="flow-description">
+                        Systematically test for vulnerabilities using both automated tools 
+                        and manual techniques. Focus on business logic flaws.
+                    </p>
+                </div>
+
+                <div class="flow-card" onclick="scrollToPhase('reporting')">
+                    <div class="flow-number">04</div>
+                    <h3 class="flow-title">Reporting</h3>
+                    <p class="flow-description">
+                        Document your findings with clear proof of concepts. 
+                        A good report can make the difference between acceptance and rejection.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Progress Tracker -->
+        <section class="progress-tracker">
+            <h3 class="progress-title">Methodology Progress Tracker</h3>
+            <div class="progress-phases">
+                <div class="progress-phase completed" onclick="togglePhase('reconnaissance')">
+                    <div class="phase-progress-icon">✓</div>
+                    <div class="phase-progress-name">Reconnaissance</div>
+                    <div class="phase-progress-desc">Information Gathering</div>
+                </div>
+                <div class="progress-phase active" onclick="togglePhase('discovery')">
+                    <div class="phase-progress-icon">02</div>
+                    <div class="phase-progress-name">Discovery</div>
+                    <div class="phase-progress-desc">Asset Mapping</div>
+                </div>
+                <div class="progress-phase" onclick="togglePhase('testing')">
+                    <div class="phase-progress-icon">03</div>
+                    <div class="phase-progress-name">Testing</div>
+                    <div class="phase-progress-desc">Vulnerability Analysis</div>
+                </div>
+                <div class="progress-phase" onclick="togglePhase('reporting')">
+                    <div class="phase-progress-icon">04</div>
+                    <div class="phase-progress-name">Reporting</div>
+                    <div class="phase-progress-desc">Documentation</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Phase 1: Reconnaissance -->
+        <section id="reconnaissance" class="phase-section">
+            <div class="phase-header">
+                <div class="phase-icon">🔍</div>
+                <div class="phase-info">
+                    <h2>Phase 1: Reconnaissance</h2>
+                    <p>The foundation of every successful bug bounty hunt. Gather as much information as possible about your target.</p>
+                </div>
+            </div>
+
+            <div class="techniques-grid">
+                <div class="technique-card">
+                    <h3 class="technique-title">Subdomain Enumeration</h3>
+                    <p class="technique-description">
+                        Discover all subdomains associated with your target. Subdomains often host forgotten services, 
+                        development environments, or less-secured applications.
+                    </p>
+                    <div class="technique-tools">
+                        <span class="tools-label">Tools:</span>
+                        <div class="tools-list">
+                            <span class="tool-tag">Subfinder</span>
+                            <span class="tool-tag">Amass</span>
+                            <span class="tool-tag">Assetfinder</span>
+                            <span class="tool-tag">Knockpy</span>
+                        </div>
+                    </div>
+                    <div class="technique-example">
+                        <div class="example-label">Example Commands:</div>
+                        <div>subfinder -d target.com -all</div>
+                        <div>amass enum -d target.com -o subdomains.txt</div>
+                        <div>assetfinder --subs-only target.com</div>
+                    </div>
+                </div>
+
+                <div class="technique-card">
+                    <h3 class="technique-title">Port Scanning</h3>
+                    <p class="technique-description">
+                        Identify open ports and running services. Non-standard ports often reveal interesting 
+                        services like development tools, admin panels, or backup services.
+                    </p>
+                    <div class="technique-tools">
+                        <span class="tools-label">Tools:</span>
+                        <div class="tools-list">
+                            <span class="tool-tag">Nmap</span>
+                            <span class="tool-tag">Masscan</span>
+                            <span class="tool-tag">Naabu</span>
+                            <span class="tool-tag">Rustscan</span>
+                        </div>
+                    </div>
+                    <div class="technique-example">
+                        <div class="example-label">Example Commands:</div>
+                        <div>nmap -sV -p- target.com</div>
+                        <div>nmap -sC -sV -p 1-10000 target.com</div>
+                        <div>masscan -p1-65535 target.com --rate=1000</div>
+                    </div>
+                </div>
+
+                <div class="technique-card">
+                    <h3 class="technique-title">OSINT Gathering</h3>
+                    <p class="technique-description">
+                        Use open-source intelligence to find information about the target. This includes 
+                        employee emails, technology stacks, and infrastructure details.
+                    </p>
+                    <div class="technique-tools">
+                        <span class="tools-label">Tools:</span>
+                        <div class="tools-list">
+                            <span class="tool-tag">Maltego</span>
+                            <span class="tool-tag">Shodan</span>
+                            <span class="tool-tag">Censys</span>
+                            <span class="tool-tag">theHarvester</span>
+                        </div>
+                    </div>
+                    <div class="technique-example">
+                        <div class="example-label">Example Commands:</div>
+                        <div>theHarvester -d target.com -b all</div>
+                        <div>shodan search org:"Target Corp"</div>
+                        <div>maltego -t target.com</div>
+                    </div>
+                </div>
+
+                <div class="technique-card">
+                    <h3 class="technique-title">Directory Brute-forcing</h3>
+                    <p class="technique-description">
+                        Discover hidden directories and files. Many applications have admin panels, 
+                        backup files, or debug endpoints that aren't publicly linked.
+                    </p>
+                    <div class="technique-tools">
+                        <span class="tools-label">Tools:</span>
+                        <div class="tools-list">
+                            <span class="tool-tag">Gobuster</span>
+                            <span class="tool-tag">Dirb</span>
+                            <span class="tool-tag">Ffuf</span>
+                            <span class="tool-tag">Dirsearch</span>
+                        </div>
+                    </div>
+                    <div class="technique-example">
+                        <div class="example-label">Example Commands:</div>
+                        <div>gobuster dir -u target.com -w wordlist.txt</div>
+                        <div>ffuf -w wordlist.txt -u https://target.com/FUZZ</div>
+                        <div>dirb https://target.com/ wordlist.txt</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Phase 2: Discovery -->
+        <section id="discovery" class="phase-section">
+            <div class="phase-header">
+                <div class="phase-icon">🎯</div>
+                <div class="phase-info">
+                    <h2>Phase 2: Discovery</h2>
+                    <p>Identify live assets, analyze technologies, and map the attack surface. Focus on what can be attacked.</p>
+                </div>
+            </div>
+
+            <div class="techniques-grid">
+                <div class="technique-card">
+                    <h3 class="technique-title">HTTP Probing</h3>
+                    <p class="technique-description">
+                        Check which subdomains are actually live and responding. Filter out dead hosts 
+                        to focus your testing on active services.
+                    </p>
+                    <div class="technique-tools">
+                        <span class="tools-label">Tools:</span>
+                        <div class="tools-list">
+                            <span class="tool-tag">httpx</span>
+                            <span class="tool-tag">httprobe</span>
+                            <span class="tool-tag">EyeWitness</span>
+                            <span class="tool-tag">Aquatone</span>
+                        </div>
+                    </div>
+                    <div class="technique-example">
+                        <div class="example-label">Example Commands:</div>
+                        <div>httpx -l subdomains.txt -silent</div>
+                        <div>httprobe < subdomains.txt</div>
+                        <div>eyewitness --web -f subdomains.txt</div>
+                    </div>
+                </div>
+
+                <div class="technique-card">
+                    <h3 class="technique-title">Technology Stack Analysis</h3>
+                    <p class="technique-description">
+                        Identify the technologies used by the target. Knowing the stack helps you 
+                        focus on technology-specific vulnerabilities and exploits.
+                    </p>
+                    <div class="technique-tools">
+                        <span class="tools-label">Tools:</span>
+                        <div class="tools-list">
+                            <span class="tool-tag">Wappalyzer</span>
+                            <span class="tool-tag">BuiltWith</span>
+                            <span class="tool-tag">WhatWeb</span>
+                            <span class="tool-tag">Nuclei</span>
+                        </div>
+                    </div>
+                    <div class="technique-example">
+                        <div class="example-label">Example Commands:</div>
+                        <div>whatweb target.com</div>
+                        <div>nuclei -l targets.txt -t technologies/</div>
+                        <div>wappalyzer https://target.com</div>
+                    </div>
+                </div>
+
+                <div class="technique-card">
+                    <h3 class="technique-title">JavaScript Analysis</h3>
+                    <p class="technique-description">
+                        Analyze JavaScript files for hidden endpoints, API calls, and sensitive information. 
+                        Modern SPAs often leak valuable information in client-side code.
+                    </p>
+                    <div class="technique-tools">
+                        <span class="tools-label">Tools:</span>
+                        <div class="tools-list">
+                            <span class="tool-tag">JS-Scan</span>
+                            <span class="tool-tag">LinkFinder</span>
+                            <span class="tool-tag">SecretFinder</span>
+                            <span class="tool-tag">Grep</span>
+                        </div>
+                    </div>
+                    <div class="technique-example">
+                        <div class="example-label">Example Commands:</div>
+                        <div>grep -r "api/" *.js</div>
+                        <div>python3 linkfinder.py -i https://target.com</div>
+                        <div>secretfinder -i target.com -o cli</div>
+                    </div>
+                </div>
+
+                <div class="technique-card">
+                    <h3 class="technique-title">API Discovery</h3>
+                    <p class="technique-description">
+                        Find API endpoints that might not be documented. APIs often have different 
+                        security controls and can be a rich source of vulnerabilities.
+                    </p>
+                    <div class="technique-tools">
+                        <span class="tools-label">Tools:</span>
+                        <div class="tools-list">
+                            <span class="tool-tag">Kiterunner</span>
+                            <span class="tool-tag">Arjun</span>
+                            <span class="tool-tag">Postman</span>
+                            <span class="tool-tag">Insomnia</span>
+                        </div>
+                    </div>
+                    <div class="technique-example">
+                        <div class="example-label">Example Commands:</div>
+                        <div>arjun -u https://target.com/api/</div>
+                        <div>kr scan api.txt -w routes.txt</div>
+                        <div>ffuf -w api-wordlist.txt -u https://target.com/FUZZ</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Terminal Demo -->
+        <section class="terminal-section">
+            <div class="terminal-header">
+                <div class="terminal-icon">$</div>
+                <h3 class="terminal-title">Live Reconnaissance Demo</h3>
+            </div>
+            <div class="terminal-window">
+                <div class="terminal-controls">
+                    <div class="terminal-btn close"></div>
+                    <div class="terminal-btn minimize"></div>
+                    <div class="terminal-btn maximize"></div>
+                </div>
+                <div class="terminal-content" id="terminalContent">
+                    <div class="terminal-line">
+                        <span class="terminal-prompt">$</span>
+                        <span class="terminal-command"> subfinder -d example.com -all -silent</span>
+                    </div>
+                    <div class="terminal-line terminal-output">blog.example.com</div>
+                    <div class="terminal-line terminal-output">api.example.com</div>
+                    <div class="terminal-line terminal-output">dev.example.com</div>
+                    <div class="terminal-line terminal-output">staging.example.com</div>
+                    <div class="terminal-line terminal-output">admin.example.com</div>
+                    <div class="terminal-line">
+                        <span class="terminal-prompt">$</span>
+                        <span class="terminal-command"> httpx -l subdomains.txt -silent</span>
+                    </div>
+                    <div class="terminal-line terminal-output">https://blog.example.com</div>
+                    <div class="terminal-line terminal-output">https://api.example.com</div>
+                    <div class="terminal-line terminal-output">https://dev.example.com [403]</div>
+                    <div class="terminal-line">
+                        <span class="terminal-prompt">$</span>
+                        <span class="terminal-command"> nmap -sV -p- api.example.com</span>
+                    </div>
+                    <div class="terminal-line terminal-output">PORT     STATE SERVICE VERSION</div>
+                    <div class="terminal-line terminal-output">80/tcp   open  http    nginx 1.18.0</div>
+                    <div class="terminal-line terminal-output">443/tcp  open  https   nginx 1.18.0</div>
+                    <div class="terminal-line terminal-output">8080/tcp open  http    Apache Tomcat/Coyote JSP engine 1.1</div>
+                    <div class="terminal-line">
+                        <span class="terminal-prompt">$</span>
+                        <span class="terminal-cursor"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Phase 3: Testing -->
+        <section id="testing" class="phase-section">
+            <div class="phase-header">
+                <div class="phase-icon">⚔️</div>
+                <div class="phase-info">
+                    <h2>Phase 3: Testing</h2>
+                    <p>Systematically test for vulnerabilities. Combine automated scanning with manual testing for best results.</p>
+                </div>
+            </div>
+
+            <div class="techniques-grid">
+                <div class="technique-card">
+                    <h3 class="technique-title">Cross-Site Scripting (XSS)</h3>
+                    <p class="technique-description">
+                        Test for both reflected and stored XSS vulnerabilities. Modern applications 
+                        often have complex input validation that can be bypassed.
+                    </p>
+                    <div class="technique-tools">
+                        <span class="tools-label">Tools:</span>
+                        <div class="tools-list">
+                            <span class="tool-tag">XSStrike</span>
+                            <span class="tool-tag">XSSer</span>
+                            <span class="tool-tag">Burp Suite</span>
+                            <span class="tool-tag">Dalfox</span>
+                        </div>
+                    </div>
+                    <div class="technique-example">
+                        <div class="example-label">Testing Approach:</div>
+                        <div>1. Test all input fields and parameters</div>
+                        <div>2. Try different XSS payloads</div>
+                        <div>3. Check for WAF bypass techniques</div>
+                        <div>4. Test DOM-based XSS in JavaScript</div>
+                    </div>
+                </div>
+
+                <div class="technique-card">
+                    <h3 class="technique-title">SQL Injection</h3>
+                    <p class="technique-description">
+                        Test for SQL injection in all database interactions. Even with modern frameworks, 
+                        SQL injection remains a common vulnerability.
+                    </p>
+                    <div class="technique-tools">
+                        <span class="tools-label">Tools:</span>
+                        <div class="tools-list">
+                            <span class="tool-tag">SQLMap</span>
+                            <span class="tool-tag">Burp Suite</span>
+                            <span class="tool-tag">NoSQLMap</span>
+                            <span class="tool-tag">Manual Testing</span>
+                        </div>
+                    </div>
+                    <div class="technique-example">
+                        <div class="example-label">Testing Approach:</div>
+                        <div>1. Test all parameters and form fields</div>
+                        <div>2. Use error-based detection</div>
+                        <div>3. Try time-based blind SQLi</div>
+                        <div>4. Test different database types</div>
+                    </div>
+                </div>
+
+                <div class="technique-card">
+                    <h3 class="technique-title">Business Logic Testing</h3>
+                    <p class="technique-description">
+                        Test the application's business logic for flaws. These vulnerabilities are 
+                        often overlooked by automated tools and can have high impact.
+                    </p>
+                    <div class="technique-tools">
+                        <span class="tools-label">Tools:</span>
+                        <div class="tools-list">
+                            <span class="tool-tag">Manual Testing</span>
+                            <span class="tool-tag">Burp Suite</span>
+                            <span class="tool-tag">Postman</span>
+                            <span class="tool-tag">Custom Scripts</span>
+                        </div>
+                    </div>
+                    <div class="technique-example">
+                        <div class="example-label">Testing Areas:</div>
+                        <div>• Authentication bypass</div>
+                        <div>• Privilege escalation</div>
+                        <div>• Payment flow manipulation</div>
+                        <div>• Rate limiting bypass</div>
+                    </div>
+                </div>
+
+                <div class="technique-card">
+                    <h3 class="technique-title">Access Control Testing</h3>
+                    <p class="technique-description">
+                        Test for IDOR (Insecure Direct Object Reference) and other access control issues. 
+                        These are common in applications with complex user roles.
+                    </p>
+                    <div class="technique-tools">
+                        <span class="tools-label">Tools:</span>
+                        <div class="tools-list">
+                            <span class="tool-tag">Burp Suite</span>
+                            <span class="tool-tag">Custom Scripts</span>
+                            <span class="tool-tag">AutoRepeater</span>
+                            <span class="tool-tag">Manual Testing</span>
+                        </div>
+                    </div>
+                    <div class="technique-example">
+                        <div class="example-label">Testing Approach:</div>
+                        <div>1. Test with different user accounts</div>
+                        <div>2. Modify object IDs in requests</div>
+                        <div>3. Test horizontal/vertical privilege escalation</div>
+                        <div>4. Check for forced browsing</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Phase 4: Reporting -->
+        <section id="reporting" class="phase-section">
+            <div class="phase-header">
+                <div class="phase-icon">📝</div>
+                <div class="phase-info">
+                    <h2>Phase 4: Reporting</h2>
+                    <p>A good report can make the difference between a bounty and a rejection. Learn to document effectively.</p>
+                </div>
+            </div>
+
+            <div class="techniques-grid">
+                <div class="technique-card">
+                    <h3 class="technique-title">Report Structure</h3>
+                    <p class="technique-description">
+                        Follow a clear structure that makes it easy for triagers to understand and reproduce your finding.
+                    </p>
+                    <div class="technique-example">
+                        <div class="example-label">Essential Sections:</div>
+                        <div>1. <strong>Summary</strong> - Brief vulnerability overview</div>
+                        <div>2. <strong>Description</strong> - Technical details and impact</div>
+                        <div>3. <strong>Steps to Reproduce</strong> - Clear, numbered steps</div>
+                        <div>4. <strong>Proof of Concept</strong> - Screenshots, videos, payloads</div>
+                        <div>5. <strong>Impact Assessment</strong> - Business impact explanation</div>
+                        <div>6. <strong>Remediation</strong> - Suggested fix (optional)</div>
+                    </div>
+                </div>
+
+                <div class="technique-card">
+                    <h3 class="technique-title">Proof of Concept</h3>
+                    <p class="technique-description">
+                        Provide clear evidence that demonstrates the vulnerability. Visual proof is often more 
+                        convincing than written descriptions alone.
+                    </p>
+                    <div class="technique-example">
+                        <div class="example-label">Evidence Types:</div>
+                        <div>• Screenshots with annotations</div>
+                        <div>• Screen recordings (GIF/MP4)</div>
+                        <div>• Burp Suite request/response pairs</div>
+                        <div>• Custom exploit scripts</div>
+                        <div>• Log files and error messages</div>
+                    </div>
+                </div>
+
+                <div class="technique-card">
+                    <h3 class="technique-title">Severity Assessment</h3>
+                    <p class="technique-description">
+                        Accurately assess the severity of your finding. Understand CVSS scoring and 
+                        consider the business context of the vulnerability.
+                    </p>
+                    <div class="technique-example">
+                        <div class="example-label">Severity Factors:</div>
+                        <div>• Ease of exploitation</div>
+                        <div>• Authentication requirements</div>
+                        <div>• Potential impact (data, systems, users)</div>
+                        <div>• Business context and asset value</div>
+                        <div>• WAF/IDS bypass requirements</div>
+                    </div>
+                </div>
+
+                <div class="technique-card">
+                    <h3 class="technique-title">Communication Best Practices</h3>
+                    <p class="technique-description">
+                        Maintain professional communication throughout the disclosure process. 
+                        Good relationships lead to more opportunities and higher bounties.
+                    </p>
+                    <div class="technique-example">
+                        <div class="example-label">Do's and Don'ts:</div>
+                        <div>✅ Be patient and professional</div>
+                        <div>✅ Respond promptly to questions</div>
+                        <div>✅ Provide additional information when requested</div>
+                        <div>❌ Don't rush triagers or demand updates</div>
+                        <div>❌ Don't argue about severity ratings</div>
+                        <div>❌ Don't disclose vulnerabilities publicly</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Methodology Summary -->
+        <section style="background: rgba(0, 0, 0, 0.8); border: 2px solid var(--cyber-purple); border-radius: 15px; padding: 40px; margin: 60px 0; position: relative; overflow: hidden;">
+            <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--cyber-purple), var(--cyber-cyan)); animation: scan-line 2s linear infinite;"></div>
+            <h3 style="font-family: 'Orbitron', monospace; font-size: 1.8rem; color: var(--cyber-purple); margin-bottom: 25px; text-transform: uppercase; text-align: center;">Key Success Factors</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;">
+                <div style="text-align: center; padding: 20px;">
+                    <div style="width: 60px; height: 60px; background: var(--cyber-cyan); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-size: 1.5rem; color: var(--cyber-dark);">🔄</div>
+                    <h4 style="color: var(--cyber-cyan); margin-bottom: 10px; font-family: 'Orbitron', monospace;">Consistency</h4>
+                    <p style="color: var(--cyber-light-gray);">Follow the methodology consistently. Don't skip phases or rush through reconnaissance.</p>
+                </div>
+                <div style="text-align: center; padding: 20px;">
+                    <div style="width: 60px; height: 60px; background: var(--cyber-magenta); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-size: 1.5rem; color: var(--cyber-dark);">📝</div>
+                    <h4 style="color: var(--cyber-magenta); margin-bottom: 10px; font-family: 'Orbitron', monospace;">Documentation</h4>
+                    <p style="color: var(--cyber-light-gray);">Keep detailed notes throughout the process. Good documentation leads to better reports.</p>
+                </div>
+                <div style="text-align: center; padding: 20px;">
+                    <div style="width: 60px; height: 60px; background: var(--cyber-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-size: 1.5rem; color: var(--cyber-dark);">🎯</div>
+                    <h4 style="color: var(--cyber-green); margin-bottom: 10px; font-family: 'Orbitron', monospace;">Focus</h4>
+                    <p style="color: var(--cyber-light-gray);">Spend quality time on each target. Deep understanding beats broad but shallow testing.</p>
+                </div>
+                <div style="text-align: center; padding: 20px;">
+                    <div style="width: 60px; height: 60px; background: var(--cyber-orange); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-size: 1.5rem; color: var(--cyber-dark);">📚</div>
+                    <h4 style="color: var(--cyber-orange); margin-bottom: 10px; font-family: 'Orbitron', monospace;">Learning</h4>
+                    <p style="color: var(--cyber-light-gray);">Continuously learn from write-ups, reports, and other hunters. The field evolves rapidly.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to Action -->
+        <section style="text-align: center; padding: 60px 20px; background: linear-gradient(135deg, rgba(0,255,255,0.05), rgba(255,0,255,0.05));">
+            <h2 style="font-family: 'Orbitron', monospace; font-size: 2.2rem; color: var(--cyber-cyan); margin-bottom: 25px; text-transform: uppercase;">Ready to Practice?</h2>
+            <p style="font-size: 1.2rem; color: var(--cyber-light-gray); margin-bottom: 40px; max-width: 600px; margin-left: auto; margin-right: auto;">
+                Now that you understand the methodology, it's time to explore the tools and platforms that will help you implement it effectively.
+            </p>
+            <div>
+                <a href="tools.html" class="cyber-btn">Explore Tools Arsenal</a>
+                <a href="platforms.html" class="cyber-btn">Compare Platforms</a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer style="background: var(--cyber-darker); border-top: 2px solid var(--cyber-cyan); padding: 40px 20px; text-align: center;">
+        <div style="max-width: 1200px; margin: 0 auto;">
+            <p style="color: var(--cyber-light-gray); font-size: 0.9rem;">
+                © 2024 Bug Bounty Hunter Guide. Empowering ethical hackers worldwide.
+            </p>
+            <p style="color: var(--cyber-cyan); font-size: 0.8rem; margin-top: 10px;">
+                Always practice responsible disclosure and follow program guidelines.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Scroll to phase function
+        function scrollToPhase(phaseId) {
+            const element = document.getElementById(phaseId);
+            if (element) {
+                element.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+                
+                // Highlight the phase briefly
+                element.style.boxShadow = '0 0 30px rgba(0, 255, 255, 0.5)';
+                setTimeout(() => {
+                    element.style.boxShadow = '';
+                }, 2000);
+            }
+        }
+
+        // Toggle phase in progress tracker
+        function togglePhase(phaseId) {
+            const phases = document.querySelectorAll('.progress-phase');
+            phases.forEach(phase => {
+                phase.classList.remove('active');
+                if (phase.classList.contains('completed')) {
+                    phase.classList.remove('completed');
+                }
+            });
+            
+            // Find and activate the clicked phase
+            const targetPhase = Array.from(phases).find(phase => 
+                phase.onclick.toString().includes(phaseId)
+            );
+            if (targetPhase) {
+                targetPhase.classList.add('active');
+                targetPhase.classList.add('completed');
+            }
+            
+            // Scroll to the phase
+            scrollToPhase(phaseId);
+        }
+
+        // Terminal animation
+        function animateTerminal() {
+            const terminal = document.getElementById('terminalContent');
+            const lines = terminal.querySelectorAll('.terminal-line');
+            
+            // Hide all lines initially
+            lines.forEach(line => {
+                line.style.opacity = '0';
+                line.style.transform = 'translateX(-20px)';
+            });
+            
+            // Animate lines one by one
+            let delay = 0;
+            lines.forEach(line => {
+                setTimeout(() => {
+                    line.style.transition = 'all 0.3s ease';
+                    line.style.opacity = '1';
+                    line.style.transform = 'translateX(0)';
+                }, delay);
+                delay += 300;
+            });
+        }
+
+        // Initialize animations when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate technique cards on scroll
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            // Apply animation to technique cards
+            const cards = document.querySelectorAll('.technique-card');
+            cards.forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                card.style.transition = 'all 0.6s ease';
+                observer.observe(card);
+            });
+            
+            // Start terminal animation after a delay
+            setTimeout(animateTerminal, 2000);
+        });
+
+        // Smooth scrolling for internal links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

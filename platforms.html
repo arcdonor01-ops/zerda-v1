@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bug Bounty Platforms - Complete Comparison</title>
+    <meta name="description" content="Compare bug bounty platforms: HackerOne, Bugcrowd, Intigriti, and more. Learn which platform suits your skills and goals.">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Core Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    
+    <style>
+        /* Import cyberpunk theme */
+        :root {
+            --cyber-dark: #0a0a0a;
+            --cyber-darker: #050505;
+            --cyber-cyan: #00ffff;
+            --cyber-magenta: #ff00ff;
+            --cyber-green: #00ff00;
+            --cyber-orange: #ff6600;
+            --cyber-purple: #8a2be2;
+            --cyber-gray: #333333;
+            --cyber-light-gray: #666666;
+            --cyber-white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier Prime', monospace;
+            background: var(--cyber-dark);
+            color: var(--cyber-white);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        .cyber-nav {
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(15px);
+            border-bottom: 2px solid var(--cyber-cyan);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 15px 0;
+            box-shadow: 0 2px 20px rgba(0, 255, 255, 0.3);
+        }
+
+        .cyber-nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .cyber-nav a {
+            color: var(--cyber-white);
+            text-decoration: none;
+            text-transform: uppercase;
+            font-weight: bold;
+            position: relative;
+            padding: 8px 16px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+
+        .cyber-nav a:hover, .cyber-nav a.active {
+            color: var(--cyber-cyan);
+            text-shadow: 0 0 15px var(--cyber-cyan);
+            transform: translateY(-2px);
+        }
+
+        .cyber-nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--cyber-cyan);
+            transition: width 0.3s ease;
+        }
+
+        .cyber-nav a:hover::after, .cyber-nav a.active::after {
+            width: 100%;
+        }
+
+        /* Header */
+        .page-header {
+            background: linear-gradient(135deg, var(--cyber-darker), var(--cyber-dark));
+            padding: 120px 20px 60px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 30% 45%, rgba(0,255,255,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 70% 55%, rgba(255,0,255,0.1) 0%, transparent 50%);
+        }
+
+        .page-title {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 900;
+            color: var(--cyber-cyan);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px var(--cyber-cyan);
+            position: relative;
+            z-index: 2;
+        }
+
+        .page-subtitle {
+            font-size: clamp(1rem, 3vw, 1.3rem);
+            color: var(--cyber-light-gray);
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 60px 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Platform Overview */
+        .platform-overview {
+            margin-bottom: 80px;
+            text-align: center;
+        }
+
+        .overview-title {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(2rem, 5vw, 3rem);
+            color: var(--cyber-cyan);
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 20px var(--cyber-cyan);
+        }
+
+        .platform-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            margin: 50px 0;
+        }
+
+        .platform-card {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--cyber-cyan);
+            border-radius: 20px;
+            padding: 35px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .platform-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0, 255, 255, 0.3);
+            border-color: var(--cyber-magenta);
+        }
+
+        .platform-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--cyber-cyan), var(--cyber-magenta), var(--cyber-green));
+            animation: scan-line 2s linear infinite;
+        }
+
+        @keyframes scan-line {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .platform-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .platform-logo {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(45deg, var(--cyber-cyan), var(--cyber-magenta));
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--cyber-dark);
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .platform-info h3 {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.6rem;
+            color: var(--cyber-cyan);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .platform-tagline {
+            color: var(--cyber-light-gray);
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+
+        .platform-description {
+            color: var(--cyber-white);
+            margin-bottom: 25px;
+            line-height: 1.7;
+        }
+
+        .platform-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            border: 1px solid var(--cyber-gray);
+        }
+
+        .stat-value {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--cyber-magenta);
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: var(--cyber-light-gray);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .platform-features {
+            margin-bottom: 25px;
+        }
+
+        .features-title {
+            color: var(--cyber-cyan);
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .features-list {
+            list-style: none;
+        }
+
+        .features-list li {
+            color: var(--cyber-white);
+            margin-bottom: 8px;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .features-list li::before {
+            content: '✓';
+            color: var(--cyber-green);
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        .platform-actions {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .platform-btn {
+            background: linear-gradient(45deg, var(--cyber-cyan), var(--cyber-magenta));
+            border: none;
+            color: var(--cyber-dark);
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 12px 24px;
+            cursor: pointer;
+            border-radius: 8px;
+            font-family: 'Courier Prime', monospace;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .platform-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 255, 255, 0.3);
+        }
+
+        .platform-btn.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--cyber-white);
+            border: 2px solid var(--cyber-gray);
+        }
+
+        .platform-btn.secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: var(--cyber-cyan);
+        }
+
+        /* Comparison Table */
+        .comparison-section {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--cyber-purple);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 60px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .comparison-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--cyber-purple), var(--cyber-cyan));
+            animation: scan-line 2s linear infinite;
+        }
+
+        .comparison-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.8rem;
+            color: var(--cyber-purple);
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 30px;
+            overflow-x: auto;
+            display: block;
+        }
+
+        .comparison-table thead {
+            background: rgba(0, 255, 255, 0.1);
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 18px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--cyber-gray);
+            vertical-align: top;
+        }
+
+        .comparison-table th {
+            color: var(--cyber-cyan);
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        .comparison-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .platform-name {
+            font-weight: bold;
+            color: var(--cyber-magenta);
+            font-size: 1.1rem;
+        }
+
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .rating-stars {
+            color: var(--cyber-green);
+            font-weight: bold;
+        }
+
+        .rating-text {
+            color: var(--cyber-light-gray);
+            font-size: 0.9rem;
+        }
+
+        .difficulty-easy { color: var(--cyber-green); }
+        .difficulty-medium { color: var(--cyber-orange); }
+        .difficulty-hard { color: var(--cyber-magenta); }
+
+        /* Platform Statistics */
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 60px 0;
+        }
+
+        .stat-card {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--cyber-green);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 255, 0, 0.2);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cyber-green), var(--cyber-cyan));
+            animation: scan-line 2s linear infinite;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--cyber-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 1.8rem;
+            color: var(--cyber-dark);
+        }
+
+        .stat-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.3rem;
+            color: var(--cyber-green);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .stat-value {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--cyber-cyan);
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px var(--cyber-cyan);
+        }
+
+        .stat-description {
+            color: var(--cyber-light-gray);
+            font-size: 0.9rem;
+        }
+
+        /* Success Stories */
+        .success-stories {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--cyber-orange);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 60px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .success-stories::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--cyber-orange), var(--cyber-cyan));
+            animation: scan-line 2s linear infinite;
+        }
+
+        .stories-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.8rem;
+            color: var(--cyber-orange);
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .stories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        .story-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--cyber-gray);
+            border-radius: 15px;
+            padding: 25px;
+            position: relative;
+        }
+
+        .story-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .story-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(45deg, var(--cyber-orange), var(--cyber-magenta));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--cyber-dark);
+            font-weight: bold;
+        }
+
+        .story-info h4 {
+            color: var(--cyber-orange);
+            margin-bottom: 5px;
+            font-family: 'Orbitron', monospace;
+        }
+
+        .story-platform {
+            color: var(--cyber-cyan);
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .story-content {
+            color: var(--cyber-white);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .story-bounty {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid var(--cyber-green);
+            border-radius: 8px;
+            padding: 10px 15px;
+            text-align: center;
+            color: var(--cyber-green);
+            font-weight: bold;
+            font-family: 'Orbitron', monospace;
+        }
+
+        /* Platform Selection Guide */
+        .selection-guide {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--cyber-green);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 60px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .selection-guide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--cyber-green), var(--cyber-cyan));
+            animation: scan-line 2s linear infinite;
+        }
+
+        .guide-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.8rem;
+            color: var(--cyber-green);
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .guide-flow {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .guide-step {
+            text-align: center;
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            border: 1px solid var(--cyber-gray);
+            position: relative;
+        }
+
+        .step-number {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            background: var(--cyber-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--cyber-dark);
+            font-size: 1.2rem;
+        }
+
+        .step-title {
+            color: var(--cyber-green);
+            font-weight: bold;
+            margin: 20px 0 15px;
+            font-family: 'Orbitron', monospace;
+            text-transform: uppercase;
+        }
+
+        .step-description {
+            color: var(--cyber-white);
+            line-height: 1.6;
+        }
+
+        /* Call to Action */
+        .cta-section {
+            text-align: center;
+            padding: 80px 20px;
+            background: linear-gradient(135deg, rgba(255,0,255,0.05), rgba(0,255,0,0.05));
+            margin: 60px 0;
+        }
+
+        .cta-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.2rem;
+            color: var(--cyber-cyan);
+            margin-bottom: 25px;
+            text-transform: uppercase;
+        }
+
+        .cta-description {
+            font-size: 1.2rem;
+            color: var(--cyber-light-gray);
+            margin-bottom: 40px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .cta-btn {
+            background: linear-gradient(45deg, var(--cyber-cyan), var(--cyber-magenta));
+            border: 2px solid var(--cyber-cyan);
+            color: var(--cyber-dark);
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 18px 36px;
+            cursor: pointer;
+            border-radius: 8px;
+            font-family: 'Courier Prime', monospace;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .cta-btn:hover {
+            background: linear-gradient(45deg, var(--cyber-magenta), var(--cyber-cyan));
+            box-shadow: 0 0 25px var(--cyber-cyan), 0 0 50px var(--cyber-cyan);
+            transform: translateY(-3px);
+        }
+
+        .cta-btn.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--cyber-white);
+            border-color: var(--cyber-gray);
+        }
+
+        .cta-btn.secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: var(--cyber-magenta);
+            box-shadow: 0 0 25px var(--cyber-magenta);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .cyber-nav ul {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .platform-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .comparison-table {
+                font-size: 0.8rem;
+            }
+            
+            .comparison-table th,
+            .comparison-table td {
+                padding: 12px 8px;
+            }
+            
+            .platform-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .stories-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .guide-flow {
+                grid-template-columns: 1fr;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        /* Utility Classes */
+        .text-cyan { color: var(--cyber-cyan); }
+        .text-magenta { color: var(--cyber-magenta); }
+        .text-green { color: var(--cyber-green); }
+        .text-orange { color: var(--cyber-orange); }
+        .text-purple { color: var(--cyber-purple); }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--cyber-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--cyber-cyan);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--cyber-magenta);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="cyber-nav">
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="getting-started.html">Getting Started</a></li>
+            <li><a href="methodology.html">Methodology</a></li>
+            <li><a href="tools.html">Tools</a></li>
+            <li><a href="platforms.html" class="active">Platforms</a></li>
+            <li><a href="learning-journey.html">Learning Journey</a></li>
+            <li><a href="community.html">Community</a></li>
+        </ul>
+    </nav>
+
+    <!-- Header -->
+    <header class="page-header">
+        <h1 class="page-title">Bug Bounty Platforms</h1>
+        <p class="page-subtitle">
+            Choose your battlefield wisely. Compare the top bug bounty platforms and find 
+            the one that matches your skills, goals, and hunting style.
+        </p>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Platform Overview -->
+        <section class="platform-overview">
+            <h2 class="overview-title">Platform Comparison</h2>
+            <p style="text-align: center; color: var(--cyber-light-gray); margin-bottom: 50px; font-size: 1.1rem;">
+                Each platform has its unique strengths and characteristics. Click on any platform to learn more:
+            </p>
+            
+            <div class="platform-grid">
+                <!-- HackerOne -->
+                <div class="platform-card" onclick="showPlatformDetails('hackerone')">
+                    <div class="platform-header">
+                        <div class="platform-logo">H1</div>
+                        <div class="platform-info">
+                            <h3>HackerOne</h3>
+                            <div class="platform-tagline">The World's Largest Bug Bounty Platform</div>
+                        </div>
+                    </div>
+                    <p class="platform-description">
+                        The biggest and most established bug bounty platform with the largest community of hackers. 
+                        Offers both public and private programs with some of the highest payouts in the industry.
+                    </p>
+                    <div class="platform-stats">
+                        <div class="stat-item">
+                            <span class="stat-value">$100M+</span>
+                            <span class="stat-label">Bounties Paid</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">600K+</span>
+                            <span class="stat-label">Hackers</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">2000+</span>
+                            <span class="stat-label">Programs</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">$50K</span>
+                            <span class="stat-label">Max Bounty</span>
+                        </div>
+                    </div>
+                    <div class="platform-features">
+                        <div class="features-title">Key Features:</div>
+                        <ul class="features-list">
+                            <li>Largest hacker community</li>
+                            <li>High-value private programs</li>
+                            <li>Professional triage services</li>
+                            <li>Comprehensive analytics</li>
+                            <li>Enterprise-grade security</li>
+                        </ul>
+                    </div>
+                    <div class="platform-actions">
+                        <a href="https://www.hackerone.com/" class="platform-btn" target="_blank">Visit Platform</a>
+                        <a href="#" class="platform-btn secondary" onclick="showPlatformGuide('hackerone')">Guide</a>
+                    </div>
+                </div>
+
+                <!-- Bugcrowd -->
+                <div class="platform-card" onclick="showPlatformDetails('bugcrowd')">
+                    <div class="platform-header">
+                        <div class="platform-logo">BC</div>
+                        <div class="platform-info">
+                            <h3>Bugcrowd</h3>
+                            <div class="platform-tagline">#1 Crowdsourced Cybersecurity Platform</div>
+                        </div>
+                    </div>
+                    <p class="platform-description">
+                        Pioneer in crowdsourced security with strong focus on vulnerability disclosure programs. 
+                        Known for excellent triage services and researcher-friendly policies.
+                    </p>
+                    <div class="platform-stats">
+                        <div class="stat-item">
+                            <span class="stat-value">$50M+</span>
+                            <span class="stat-label">Bounties Paid</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">400K+</span>
+                            <span class="stat-label">Researchers</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">1500+</span>
+                            <span class="stat-label">Programs</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">$30K</span>
+                            <span class="stat-label">Max Bounty</span>
+                        </div>
+                    </div>
+                    <div class="platform-features">
+                        <div class="features-title">Key Features:</div>
+                        <ul class="features-list">
+                            <li>Excellent triage services</li>
+                            <li>Researcher-friendly policies</li>
+                            <li>Strong VDP focus</li>
+                            <li>Good for beginners</li>
+                            <li>Regular CTF events</li>
+                        </ul>
+                    </div>
+                    <div class="platform-actions">
+                        <a href="https://www.bugcrowd.com/" class="platform-btn" target="_blank">Visit Platform</a>
+                        <a href="#" class="platform-btn secondary" onclick="showPlatformGuide('bugcrowd')">Guide</a>
+                    </div>
+                </div>
+
+                <!-- Intigriti -->
+                <div class="platform-card" onclick="showPlatformDetails('intigriti')">
+                    <div class="platform-header">
+                        <div class="platform-logo">IN</div>
+                        <div class="platform-info">
+                            <h3>Intigriti</h3>
+                            <div class="platform-tagline">Europe's #1 Bug Bounty Platform</div>
+                        </div>
+                    </div>
+                    <p class="platform-description">
+                        European-focused platform with strong GDPR compliance and excellent researcher engagement. 
+                        Known for high-quality programs and competitive payouts.
+                    </p>
+                    <div class="platform-stats">
+                        <div class="stat-item">
+                            <span class="stat-value">€15M+</span>
+                            <span class="stat-label">Bounties Paid</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">50K+</span>
+                            <span class="stat-label">Researchers</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">300+</span>
+                            <span class="stat-label">Programs</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">€25K</span>
+                            <span class="stat-label">Max Bounty</span>
+                        </div>
+                    </div>
+                    <div class="platform-features">
+                        <div class="features-title">Key Features:</div>
+                        <ul class="features-list">
+                            <li>GDPR compliant</li>
+                            <li>European focus</li>
+                            <li>CTF challenges</li>
+                            <li>Researcher engagement</li>
+                            <li>Quality over quantity</li>
+                        </ul>
+                    </div>
+                    <div class="platform-actions">
+                        <a href="https://www.intigriti.com/" class="platform-btn" target="_blank">Visit Platform</a>
+                        <a href="#" class="platform-btn secondary" onclick="showPlatformGuide('intigriti')">Guide</a>
+                    </div>
+                </div>
+
+                <!-- YesWeHack -->
+                <div class="platform-card" onclick="showPlatformDetails('yeswehack')">
+                    <div class="platform-header">
+                        <div class="platform-logo">YH</div>
+                        <div class="platform-info">
+                            <h3>YesWeHack</h3>
+                            <div class="platform-tagline">Global Bug Bounty & VDP Platform</div>
+                        </div>
+                    </div>
+                    <p class="platform-description">
+                        Fast-growing European platform with innovative features and strong focus on 
+                        researcher education and community building.
+                    </p>
+                    <div class="platform-stats">
+                        <div class="stat-item">
+                            <span class="stat-value">€10M+</span>
+                            <span class="stat-label">Bounties Paid</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">30K+</span>
+                            <span class="stat-label">Researchers</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">200+</span>
+                            <span class="stat-label">Programs</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value">€20K</span>
+                            <span class="stat-label">Max Bounty</span>
+                        </div>
+                    </div>
+                    <div class="platform-features">
+                        <div class="features-title">Key Features:</div>
+                        <ul class="features-list">
+                            <li>Educational focus</li>
+                            <li>Innovative features</li>
+                            <li>Community building</li>
+                            <li>Regular challenges</li>
+                            <li>Fast response times</li>
+                        </ul>
+                    </div>
+                    <div class="platform-actions">
+                        <a href="https://www.yeswehack.com/" class="platform-btn" target="_blank">Visit Platform</a>
+                        <a href="#" class="platform-btn secondary" onclick="showPlatformGuide('yeswehack')">Guide</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Detailed Comparison Table -->
+        <section class="comparison-section">
+            <h3 class="comparison-title">Detailed Platform Comparison</h3>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>Platform</th>
+                        <th>Community Size</th>
+                        <th>Avg Bounty</th>
+                        <th>Difficulty</th>
+                        <th>Response Time</th>
+                        <th>Best For</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="platform-name">HackerOne</td>
+                        <td>
+                            <div class="rating">
+                                <span class="rating-stars">★★★★★</span>
+                                <span class="rating-text">600K+</span>
+                            </div>
+                        </td>
+                        <td class="text-cyan">$450</td>
+                        <td><span class="difficulty-hard">Hard</span></td>
+                        <td class="text-green">24-48h</td>
+                        <td>Experienced hunters</td>
+                    </tr>
+                    <tr>
+                        <td class="platform-name">Bugcrowd</td>
+                        <td>
+                            <div class="rating">
+                                <span class="rating-stars">★★★★☆</span>
+                                <span class="rating-text">400K+</span>
+                            </div>
+                        </td>
+                        <td class="text-cyan">$380</td>
+                        <td><span class="difficulty-medium">Medium</span></td>
+                        <td class="text-green">12-36h</td>
+                        <td>All skill levels</td>
+                    </tr>
+                    <tr>
+                        <td class="platform-name">Intigriti</td>
+                        <td>
+                            <div class="rating">
+                                <span class="rating-stars">★★★☆☆</span>
+                                <span class="rating-text">50K+</span>
+                            </div>
+                        </td>
+                        <td class="text-cyan">€320</td>
+                        <td><span class="difficulty-medium">Medium</span></td>
+                        <td class="text-green">24-48h</td>
+                        <td>European hunters</td>
+                    </tr>
+                    <tr>
+                        <td class="platform-name">YesWeHack</td>
+                        <td>
+                            <div class="rating">
+                                <span class="rating-stars">★★★☆☆</span>
+                                <span class="rating-text">30K+</span>
+                            </div>
+                        </td>
+                        <td class="text-cyan">€280</td>
+                        <td><span class="difficulty-easy">Easy</span></td>
+                        <td class="text-green">12-24h</td>
+                        <td>Beginners</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Platform Statistics -->
+        <section class="stats-section">
+            <div class="stat-card">
+                <div class="stat-icon">💰</div>
+                <h3 class="stat-title">Total Bounties</h3>
+                <div class="stat-value">$500M+</div>
+                <p class="stat-description">Combined bounties paid across all major platforms</p>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <h3 class="stat-title">Global Community</h3>
+                <div class="stat-value">1M+</div>
+                <p class="stat-description">Active bug bounty hunters worldwide</p>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🎯</div>
+                <h3 class="stat-title">Programs</h3>
+                <div class="stat-value">4000+</div>
+                <p class="stat-description">Active bug bounty programs globally</p>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🏆</div>
+                <h3 class="stat-title">Max Bounty</h3>
+                <div class="stat-value">$2M</div>
+                <p class="stat-description">Highest single bounty paid to date</p>
+            </div>
+        </section>
+
+        <!-- Success Stories -->
+        <section class="success-stories">
+            <h3 class="stories-title">Success Stories</h3>
+            <div class="stories-grid">
+                <div class="story-card">
+                    <div class="story-header">
+                        <div class="story-avatar">🥷</div>
+                        <div class="story-info">
+                            <h4>@NahamSec</h4>
+                            <div class="story-platform">HackerOne</div>
+                        </div>
+                    </div>
+                    <p class="story-content">
+                        "Started with zero knowledge and built a successful bug bounty career through consistent learning 
+                        and community engagement. Now earning 6 figures annually from bug bounties."
+                    </p>
+                    <div class="story-bounty">$100K+ Annual Earnings</div>
+                </div>
+
+                <div class="story-card">
+                    <div class="story-header">
+                        <div class="story-avatar">🔥</div>
+                        <div class="story-info">
+                            <h4>@stokfredrik</h4>
+                            <div class="story-platform">Bugcrowd</div>
+                        </div>
+                    </div>
+                    <p class="story-content">
+                        "Found my first bug within 2 weeks of starting. The community support and clear program 
+                        guidelines made it easy to get started and build confidence."
+                    </p>
+                    <div class="story-bounty">$50K+ Total Earnings</div>
+                </div>
+
+                <div class="story-card">
+                    <div class="story-header">
+                        <div class="story-avatar">🎯</div>
+                        <div class="story-info">
+                            <h4>@LiveOverflow</h4>
+                            <div class="story-platform">Intigriti</div>
+                        </div>
+                    </div>
+                    <p class="story-content">
+                        "The European focus and GDPR compliance of Intigriti made it perfect for my location. 
+                        The educational content helped me improve my skills significantly."
+                    </p>
+                    <div class="story-bounty">€30K+ Total Earnings</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Platform Selection Guide -->
+        <section class="selection-guide">
+            <h3 class="guide-title">How to Choose Your Platform</h3>
+            <div class="guide-flow">
+                <div class="guide-step">
+                    <div class="step-number">1</div>
+                    <h4 class="step-title">Assess Your Level</h4>
+                    <p class="step-description">
+                        Be honest about your current skill level. Beginners should start with more accessible platforms 
+                        like YesWeHack or Bugcrowd, while experienced hunters can aim for HackerOne's private programs.
+                    </p>
+                </div>
+
+                <div class="guide-step">
+                    <div class="step-number">2</div>
+                    <h4 class="step-title">Consider Your Location</h4>
+                    <p class="step-description">
+                        European hunters might prefer Intigriti or YesWeHack for GDPR compliance and local programs. 
+                        US-based hunters often find more opportunities on HackerOne and Bugcrowd.
+                    </p>
+                </div>
+
+                <div class="guide-step">
+                    <div class="step-number">3</div>
+                    <h4 class="step-title">Define Your Goals</h4>
+                    <p class="step-description">
+                        Looking for high payouts? Try HackerOne. Want to learn and grow? Consider platforms with 
+                        educational focus like Intigriti. Need quick wins? Start with beginner-friendly options.
+                    </p>
+                </div>
+
+                <div class="guide-step">
+                    <div class="step-number">4</div>
+                    <h4 class="step-title">Start Small</h4>
+                    <p class="step-description">
+                        Don't try to master all platforms at once. Pick one or two that match your profile and 
+                        focus on building reputation and understanding the ecosystem before expanding.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to Action -->
+        <section class="cta-section">
+            <h2 class="cta-title">Ready to Start Hunting?</h2>
+            <p class="cta-description">
+                You've learned the methodology, explored the tools, and compared the platforms. 
+                Now it's time to put your skills to the test and start your bug bounty journey.
+            </p>
+            <div class="cta-buttons">
+                <a href="https://www.hackerone.com/sign_up" class="cta-btn" target="_blank">Join HackerOne</a>
+                <a href="https://www.bugcrowd.com/sign-up/" class="cta-btn secondary" target="_blank">Join Bugcrowd</a>
+                <a href="methodology.html" class="cta-btn secondary">Review Methodology</a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer style="background: var(--cyber-darker); border-top: 2px solid var(--cyber-cyan); padding: 40px 20px; text-align: center;">
+        <div style="max-width: 1200px; margin: 0 auto;">
+            <p style="color: var(--cyber-light-gray); font-size: 0.9rem;">
+                © 2024 Bug Bounty Hunter Guide. Empowering ethical hackers worldwide.
+            </p>
+            <p style="color: var(--cyber-cyan); font-size: 0.8rem; margin-top: 10px;">
+                Always practice responsible disclosure and follow program guidelines.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Show platform details
+        function showPlatformDetails(platform) {
+            const details = {
+                hackerone: {
+                    title: 'HackerOne - The Industry Leader',
+                    content: 'HackerOne is the largest and most established bug bounty platform with over 600,000 registered hackers. Founded in 2012, it has paid out over $100 million in bounties. The platform is known for high-value private programs and enterprise clients like Google, Microsoft, and the US Department of Defense.'
+                },
+                bugcrowd: {
+                    title: 'Bugcrowd - Pioneer in Crowdsourced Security',
+                    content: 'Bugcrowd pioneered the bug bounty model and has a strong focus on vulnerability disclosure programs. With 400,000+ researchers, it offers excellent triage services and researcher-friendly policies. The platform is particularly good for beginners due to its educational resources and supportive community.'
+                },
+                intigriti: {
+                    title: 'Intigriti - Europe\'s Leading Platform',
+                    content: 'Intigriti is Europe\'s number one bug bounty platform with strong GDPR compliance and focus on European companies. With 50,000+ researchers, it offers high-quality programs and excellent researcher engagement through CTF challenges and educational content.'
+                },
+                yeswehack: {
+                    title: 'YesWeHack - Innovation in Bug Bounty',
+                    content: 'YesWeHack is a fast-growing European platform known for innovative features and strong community focus. With 30,000+ researchers, it emphasizes education and skill development through regular challenges and comprehensive learning resources.'
+                }
+            };
+            
+            const detail = details[platform];
+            if (detail) {
+                alert(`${detail.title}\n\n${detail.content}`);
+            }
+        }
+
+        // Show platform guide
+        function showPlatformGuide(platform) {
+            const guides = {
+                hackerone: 'HackerOne Getting Started:\n\n1. Create account and complete profile\n2. Start with public programs\n3. Read program policies carefully\n4. Focus on quality over quantity\n5. Build reputation for private invites',
+                
+                bugcrowd: 'Bugcrowd Getting Started:\n\n1. Sign up and verify your email\n2. Join the Discord community\n3. Start with VDP programs\n4. Use the researcher resources\n5. Participate in CTF events',
+                
+                intigriti: 'Intigriti Getting Started:\n\n1. Register and complete profile\n2. Join their educational programs\n3. Participate in monthly challenges\n4. Focus on European targets\n5. Engage with the community',
+                
+                yeswehack: 'YesWeHack Getting Started:\n\n1. Create account and set up profile\n2. Complete the educational tracks\n3. Start with beginner-friendly programs\n4. Join their challenges and events\n5. Build skills progressively'
+            };
+            
+            alert(guides[platform] || 'Guide not available for this platform');
+        }
+
+        // Initialize page animations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate platform cards on scroll
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            // Apply animation to platform cards
+            const cards = document.querySelectorAll('.platform-card');
+            cards.forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                card.style.transition = 'all 0.6s ease';
+                observer.observe(card);
+            });
+            
+            // Animate stat cards
+            const statCards = document.querySelectorAll('.stat-card');
+            statCards.forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                card.style.transition = 'all 0.6s ease';
+                observer.observe(card);
+            });
+            
+            // Animate story cards
+            const storyCards = document.querySelectorAll('.story-card');
+            storyCards.forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                card.style.transition = 'all 0.6s ease';
+                observer.observe(card);
+            });
+        });
+    </script>
+</body>
+</html>
