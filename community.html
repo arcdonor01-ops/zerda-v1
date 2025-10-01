@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bug Bounty Community - Connect & Collaborate</title>
+    <meta name="description" content="Join the bug bounty hunter community. Share knowledge, collaborate on projects, and learn from experienced security researchers worldwide.">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@400;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Core Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    
+    <style>
+        /* Import cyberpunk theme */
+        :root {
+            --cyber-dark: #0a0a0a;
+            --cyber-darker: #050505;
+            --cyber-cyan: #00ffff;
+            --cyber-magenta: #ff00ff;
+            --cyber-green: #00ff00;
+            --cyber-orange: #ff6600;
+            --cyber-purple: #8a2be2;
+            --cyber-gray: #333333;
+            --cyber-light-gray: #666666;
+            --cyber-white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier Prime', monospace;
+            background: var(--cyber-dark);
+            color: var(--cyber-white);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        .cyber-nav {
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(15px);
+            border-bottom: 2px solid var(--cyber-cyan);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 15px 0;
+            box-shadow: 0 2px 20px rgba(0, 255, 255, 0.3);
+        }
+
+        .cyber-nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .cyber-nav a {
+            color: var(--cyber-white);
+            text-decoration: none;
+            text-transform: uppercase;
+            font-weight: bold;
+            position: relative;
+            padding: 8px 16px;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+
+        .cyber-nav a:hover, .cyber-nav a.active {
+            color: var(--cyber-cyan);
+            text-shadow: 0 0 15px var(--cyber-cyan);
+            transform: translateY(-2px);
+        }
+
+        .cyber-nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--cyber-cyan);
+            transition: width 0.3s ease;
+        }
+
+        .cyber-nav a:hover::after, .cyber-nav a.active::after {
+            width: 100%;
+        }
+
+        /* Header */
+        .page-header {
+            background: linear-gradient(135deg, var(--cyber-darker), var(--cyber-dark));
+            padding: 120px 20px 60px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 30% 45%, rgba(0,255,255,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 70% 55%, rgba(255,0,255,0.1) 0%, transparent 50%);
+        }
+
+        .page-title {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 900;
+            color: var(--cyber-cyan);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px var(--cyber-cyan);
+            position: relative;
+            z-index: 2;
+        }
+
+        .page-subtitle {
+            font-size: clamp(1rem, 3vw, 1.3rem);
+            color: var(--cyber-light-gray);
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 60px 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Community Overview */
+        .community-overview {
+            margin-bottom: 80px;
+            text-align: center;
+        }
+
+        .overview-title {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(2rem, 5vw, 3rem);
+            color: var(--cyber-cyan);
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 20px var(--cyber-cyan);
+        }
+
+        .community-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin: 50px 0;
+        }
+
+        .stat-card {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--cyber-cyan);
+            border-radius: 15px;
+            padding: 30px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 255, 255, 0.3);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cyber-cyan), var(--cyber-magenta), var(--cyber-green));
+            animation: scan-line 2s linear infinite;
+        }
+
+        @keyframes scan-line {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--cyber-cyan);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 1.8rem;
+            color: var(--cyber-dark);
+        }
+
+        .stat-number {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--cyber-magenta);
+            display: block;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px var(--cyber-magenta);
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            color: var(--cyber-white);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-description {
+            font-size: 0.9rem;
+            color: var(--cyber-light-gray);
+            margin-top: 10px;
+        }
+
+        /* Community Sections */
+        .community-section {
+            margin-bottom: 80px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--cyber-cyan);
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cyber-cyan), var(--cyber-magenta));
+            animation: scan-line 2s linear infinite;
+        }
+
+        .section-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, var(--cyber-cyan), var(--cyber-magenta));
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--cyber-dark);
+        }
+
+        .section-info h2 {
+            font-family: 'Orbitron', monospace;
+            font-size: 2rem;
+            color: var(--cyber-cyan);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .section-info p {
+            color: var(--cyber-light-gray);
+            font-size: 1.1rem;
+        }
+
+        /* Community Platforms */
+        .platforms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .platform-card {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--cyber-magenta);
+            border-radius: 15px;
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .platform-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(255, 0, 255, 0.2);
+        }
+
+        .platform-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cyber-magenta), var(--cyber-cyan));
+            animation: scan-line 2s linear infinite;
+        }
+
+        .platform-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .platform-logo {
+            width: 50px;
+            height: 50px;
+            background: var(--cyber-magenta);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--cyber-dark);
+            font-weight: bold;
+        }
+
+        .platform-name {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.3rem;
+            color: var(--cyber-magenta);
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .platform-type {
+            color: var(--cyber-cyan);
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .platform-description {
+            color: var(--cyber-light-gray);
+            margin-bottom: 20px;
+            line-height: 1.6;
+            flex-grow: 1;
+        }
+
+        .platform-features {
+            margin-bottom: 20px;
+        }
+
+        .features-title {
+            color: var(--cyber-cyan);
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: block;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        .features-list {
+            list-style: none;
+        }
+
+        .features-list li {
+            color: var(--cyber-white);
+            margin-bottom: 6px;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .features-list li::before {
+            content: '▶';
+            color: var(--cyber-cyan);
+            position: absolute;
+            left: 0;
+        }
+
+        .platform-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .platform-btn {
+            background: linear-gradient(45deg, var(--cyber-cyan), var(--cyber-magenta));
+            border: none;
+            color: var(--cyber-dark);
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 12px 24px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-family: 'Courier Prime', monospace;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .platform-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 255, 0.3);
+        }
+
+        .platform-btn.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--cyber-white);
+            border: 1px solid var(--cyber-gray);
+        }
+
+        .platform-btn.secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: var(--cyber-cyan);
+        }
+
+        /* Community Features */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .feature-card {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--cyber-green);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 255, 0, 0.2);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cyber-green), var(--cyber-cyan));
+            animation: scan-line 2s linear infinite;
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--cyber-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 1.8rem;
+            color: var(--cyber-dark);
+        }
+
+        .feature-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.3rem;
+            color: var(--cyber-green);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .feature-description {
+            color: var(--cyber-white);
+            line-height: 1.6;
+        }
+
+        /* Community Guidelines */
+        .guidelines {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--cyber-orange);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 60px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .guidelines::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--cyber-orange), var(--cyber-cyan));
+            animation: scan-line 2s linear infinite;
+        }
+
+        .guidelines-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.8rem;
+            color: var(--cyber-orange);
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .guidelines-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .guideline-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--cyber-gray);
+            border-radius: 15px;
+            padding: 25px;
+            position: relative;
+        }
+
+        .guideline-icon {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            background: var(--cyber-orange);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--cyber-dark);
+            font-size: 1.2rem;
+        }
+
+        .guideline-title {
+            color: var(--cyber-orange);
+            font-weight: bold;
+            margin: 20px 0 15px;
+            font-family: 'Orbitron', monospace;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .guideline-description {
+            color: var(--cyber-white);
+            line-height: 1.6;
+            text-align: center;
+        }
+
+        /* Success Stories */
+        .success-stories {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--cyber-purple);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 60px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .success-stories::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--cyber-purple), var(--cyber-cyan));
+            animation: scan-line 2s linear infinite;
+        }
+
+        .stories-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.8rem;
+            color: var(--cyber-purple);
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .stories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        .story-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--cyber-gray);
+            border-radius: 15px;
+            padding: 25px;
+            position: relative;
+        }
+
+        .story-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .story-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(45deg, var(--cyber-purple), var(--cyber-magenta));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: var(--cyber-dark);
+            font-weight: bold;
+        }
+
+        .story-info h4 {
+            color: var(--cyber-purple);
+            margin-bottom: 5px;
+            font-family: 'Orbitron', monospace;
+        }
+
+        .story-platform {
+            color: var(--cyber-cyan);
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .story-content {
+            color: var(--cyber-white);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .story-bounty {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid var(--cyber-green);
+            border-radius: 8px;
+            padding: 10px 15px;
+            text-align: center;
+            color: var(--cyber-green);
+            font-weight: bold;
+            font-family: 'Orbitron', monospace;
+        }
+
+        /* Join Community Section */
+        .join-section {
+            text-align: center;
+            padding: 80px 20px;
+            background: linear-gradient(135deg, rgba(255,0,255,0.05), rgba(0,255,0,0.05));
+            margin: 60px 0;
+        }
+
+        .join-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.2rem;
+            color: var(--cyber-cyan);
+            margin-bottom: 25px;
+            text-transform: uppercase;
+        }
+
+        .join-description {
+            font-size: 1.2rem;
+            color: var(--cyber-light-gray);
+            margin-bottom: 40px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .join-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .join-btn {
+            background: linear-gradient(45deg, var(--cyber-cyan), var(--cyber-magenta));
+            border: 2px solid var(--cyber-cyan);
+            color: var(--cyber-dark);
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 18px 36px;
+            cursor: pointer;
+            border-radius: 8px;
+            font-family: 'Courier Prime', monospace;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .join-btn:hover {
+            background: linear-gradient(45deg, var(--cyber-magenta), var(--cyber-cyan));
+            box-shadow: 0 0 25px var(--cyber-cyan), 0 0 50px var(--cyber-cyan);
+            transform: translateY(-3px);
+        }
+
+        .join-btn.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--cyber-white);
+            border-color: var(--cyber-gray);
+        }
+
+        .join-btn.secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: var(--cyber-magenta);
+            box-shadow: 0 0 25px var(--cyber-magenta);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .cyber-nav ul {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .community-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .platforms-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stories-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .join-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        /* Utility Classes */
+        .text-cyan { color: var(--cyber-cyan); }
+        .text-magenta { color: var(--cyber-magenta); }
+        .text-green { color: var(--cyber-green); }
+        .text-orange { color: var(--cyber-orange); }
+        .text-purple { color: var(--cyber-purple); }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--cyber-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--cyber-cyan);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--cyber-magenta);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="cyber-nav">
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="getting-started.html">Getting Started</a></li>
+            <li><a href="methodology.html">Methodology</a></li>
+            <li><a href="tools.html">Tools</a></li>
+            <li><a href="platforms.html">Platforms</a></li>
+            <li><a href="learning-journey.html">Learning Journey</a></li>
+            <li><a href="community.html" class="active">Community</a></li>
+        </ul>
+    </nav>
+
+    <!-- Header -->
+    <header class="page-header">
+        <h1 class="page-title">Bug Bounty Community</h1>
+        <p class="page-subtitle">
+            Connect with fellow security researchers, share knowledge, collaborate on projects, 
+            and grow together in the exciting world of bug bounty hunting.
+        </p>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Community Overview -->
+        <section class="community-overview">
+            <h2 class="overview-title">Global Community Stats</h2>
+            <p style="text-align: center; color: var(--cyber-light-gray); margin-bottom: 50px; font-size: 1.1rem;">
+                Join thousands of security researchers worldwide who share knowledge, collaborate on projects, 
+                and help make the internet safer for everyone.
+            </p>
+            
+            <div class="community-stats">
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <span class="stat-number">50K+</span>
+                    <div class="stat-label">Active Members</div>
+                    <div class="stat-description">Security researchers worldwide</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💬</div>
+                    <span class="stat-number">10K+</span>
+                    <div class="stat-label">Daily Messages</div>
+                    <div class="stat-description">Knowledge sharing & discussions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🏆</div>
+                    <span class="stat-number">5K+</span>
+                    <div class="stat-label">Success Stories</div>
+                    <div class="stat-description">Bounties earned & shared</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🤝</div>
+                    <span class="stat-number">1K+</span>
+                    <div class="stat-label">Collaborations</div>
+                    <div class="stat-description">Team projects & mentorships</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Community Platforms -->
+        <section class="community-section">
+            <div class="section-header">
+                <div class="section-icon">🌐</div>
+                <div class="section-info">
+                    <h2>Community Platforms</h2>
+                    <p>Join active bug bounty communities across different platforms and channels.</p>
+                </div>
+            </div>
+
+            <div class="platforms-grid">
+                <!-- Discord -->
+                <div class="platform-card">
+                    <div class="platform-header">
+                        <div class="platform-logo">💬</div>
+                        <div>
+                            <div class="platform-name">Discord Servers</div>
+                            <div class="platform-type">Real-time Chat</div>
+                        </div>
+                    </div>
+                    <p class="platform-description">
+                        Join active Discord communities for real-time discussions, help channels, 
+                        and collaboration opportunities with fellow bug bounty hunters.
+                    </p>
+                    <div class="platform-features">
+                        <span class="features-title">Popular Servers:</span>
+                        <ul class="features-list">
+                            <li>HackerOne Official Discord</li>
+                            <li>Bugcrowd Researcher Community</li>
+                            <li>InfoSec Focus</li>
+                            <li>Bug Bounty HQ</li>
+                            <li>The Cyber Mentors</li>
+                        </ul>
+                    </div>
+                    <div class="platform-actions">
+                        <a href="#" class="platform-btn" onclick="showDiscordGuide()">Join Guide</a>
+                        <a href="https://discord.gg/infosec" class="platform-btn secondary" target="_blank">InfoSec Focus</a>
+                    </div>
+                </div>
+
+                <!-- Twitter -->
+                <div class="platform-card">
+                    <div class="platform-header">
+                        <div class="platform-logo">🐦</div>
+                        <div>
+                            <div class="platform-name">Twitter/X</div>
+                            <div class="platform-type">Social Network</div>
+                        </div>
+                    </div>
+                    <p class="platform-description">
+                        Follow top bug bounty hunters, security researchers, and companies for 
+                        latest news, tips, and community discussions.
+                    </p>
+                    <div class="platform-features">
+                        <span class="features-title">Key Accounts:</span>
+                        <ul class="features-list">
+                            <li>@Hacker0x01 - HackerOne Official</li>
+                            <li>@Bugcrowd - Bugcrowd Platform</li>
+                            <li>@NahamSec - Community Leader</li>
+                            <li>@stokfredrik - Bug Bounty Hunter</li>
+                            <li>@TheCyberMentor - Educator</li>
+                        </ul>
+                    </div>
+                    <div class="platform-actions">
+                        <a href="#" class="platform-btn" onclick="showTwitterGuide()">Follow Guide</a>
+                        <a href="https://twitter.com/hacker0x01" class="platform-btn secondary" target="_blank">HackerOne</a>
+                    </div>
+                </div>
+
+                <!-- Reddit -->
+                <div class="platform-card">
+                    <div class="platform-header">
+                        <div class="platform-logo">🤖</div>
+                        <div>
+                            <div class="platform-name">Reddit</div>
+                            <div class="platform-type">Forum Platform</div>
+                        </div>
+                    </div>
+                    <p class="platform-description">
+                        Participate in subreddit discussions, share write-ups, ask questions, 
+                        and learn from the experiences of other security researchers.
+                    </p>
+                    <div class="platform-features">
+                        <span class="features-title">Active Subreddits:</span>
+                        <ul class="features-list">
+                            <li>r/bugbounty</li>
+                            <li>r/netsec</li>
+                            <li>r/cybersecurity</li>
+                            <li>r/hacking</li>
+                            <li>r/HowToHack</li>
+                        </ul>
+                    </div>
+                    <div class="platform-actions">
+                        <a href="#" class="platform-btn" onclick="showRedditGuide()">Browse Guide</a>
+                        <a href="https://reddit.com/r/bugbounty" class="platform-btn secondary" target="_blank">r/bugbounty</a>
+                    </div>
+                </div>
+
+                <!-- GitHub -->
+                <div class="platform-card">
+                    <div class="platform-header">
+                        <div class="platform-logo">🐙</div>
+                        <div>
+                            <div class="platform-name">GitHub</div>
+                            <div class="platform-type">Code Repository</div>
+                        </div>
+                    </div>
+                    <p class="platform-description">
+                        Discover open-source security tools, contribute to projects, 
+                        and collaborate on security research with developers worldwide.
+                    </p>
+                    <div class="platform-features">
+                        <span class="features-title">Notable Projects:</span>
+                        <ul class="features-list">
+                            <li>OWASP Top 10</li>
+                            <li>ProjectDiscovery Tools</li>
+                            <li>PayloadsAllTheThings</li>
+                            <li>Awesome Bug Bounty</li>
+                            <li>Security Cheat Sheets</li>
+                        </ul>
+                    </div>
+                    <div class="platform-actions">
+                        <a href="#" class="platform-btn" onclick="showGitHubGuide()">Explore Guide</a>
+                        <a href="https://github.com/projectdiscovery" class="platform-btn secondary" target="_blank">ProjectDiscovery</a>
+                    </div>
+                </div>
+
+                <!-- YouTube -->
+                <div class="platform-card">
+                    <div class="platform-header">
+                        <div class="platform-logo">📺</div>
+                        <div>
+                            <div class="platform-name">YouTube</div>
+                            <div class="platform-type">Video Platform</div>
+                        </div>
+                    </div>
+                    <p class="platform-description">
+                        Watch tutorials, conference talks, and live hacking sessions from 
+                        experienced security researchers and bug bounty hunters.
+                    </p>
+                    <div class="platform-features">
+                        <span class="features-title">Top Channels:</span>
+                        <ul class="features-list">
+                            <li>LiveOverflow</li>
+                            <li>NahamSec</li>
+                            <li>John Hammond</li>
+                            <li>The Cyber Mentor</li>
+                            <li>STÖK</li>
+                        </ul>
+                    </div>
+                    <div class="platform-actions">
+                        <a href="#" class="platform-btn" onclick="showYouTubeGuide()">Watch Guide</a>
+                        <a href="https://youtube.com/c/LiveOverflow" class="platform-btn secondary" target="_blank">LiveOverflow</a>
+                    </div>
+                </div>
+
+                <!-- Forums -->
+                <div class="platform-card">
+                    <div class="platform-header">
+                        <div class="platform-logo">📝</div>
+                        <div>
+                            <div class="platform-name">Specialized Forums</div>
+                            <div class="platform-type">Discussion Boards</div>
+                        </div>
+                    </div>
+                    <p class="platform-description">
+                        Join specialized security forums for in-depth technical discussions, 
+                        tool recommendations, and detailed vulnerability analysis.
+                    </p>
+                    <div class="platform-features">
+                        <span class="features-title">Popular Forums:</span>
+                        <ul class="features-list">
+                            <li>HackerOne Hacker Forum</li>
+                            <li>Bugcrowd Forum</li>
+                            <li>Ethical Hacker Network</li>
+                            <li>Security Focus</li>
+                            <li>Full Disclosure</li>
+                        </ul>
+                    </div>
+                    <div class="platform-actions">
+                        <a href="#" class="platform-btn" onclick="showForumGuide()">Forum Guide</a>
+                        <a href="https://forum.bugcrowd.com/" class="platform-btn secondary" target="_blank">Bugcrowd Forum</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Community Features -->
+        <section class="community-section">
+            <div class="section-header">
+                <div class="section-icon">✨</div>
+                <div class="section-info">
+                    <h2>Community Features</h2>
+                    <p>Discover what makes our bug bounty community special and valuable for hunters at all levels.</p>
+                </div>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🎓</div>
+                    <h3 class="feature-title">Knowledge Sharing</h3>
+                    <p class="feature-description">
+                        Learn from experienced hunters through tutorials, write-ups, and mentorship programs. 
+                        Share your own discoveries and help others grow.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🤝</div>
+                    <h3 class="feature-title">Collaboration</h3>
+                    <p class="feature-description">
+                        Team up with other researchers on challenging targets, participate in group CTFs, 
+                        and collaborate on open-source security tools.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">💡</div>
+                    <h3 class="feature-title">Innovation Hub</h3>
+                    <p class="feature-description">
+                        Discover new techniques, tools, and methodologies. Participate in research projects 
+                        and contribute to the advancement of security testing.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🏆</div>
+                    <h3 class="feature-title">Recognition</h3>
+                    <p class="feature-description">
+                        Get recognized for your contributions, achievements, and expertise. 
+                        Build your reputation in the global security community.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🌐</div>
+                    <h3 class="feature-title">Global Network</h3>
+                    <p class="feature-description">
+                        Connect with security researchers from around the world. Build professional relationships 
+                        and explore career opportunities.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3 class="feature-title">Target Sharing</h3>
+                    <p class="feature-description">
+                        Share interesting targets, discuss program policies, and collaborate on 
+                        challenging bug bounty programs with other hunters.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Community Guidelines -->
+        <section class="guidelines">
+            <h3 class="guidelines-title">Community Guidelines</h3>
+            <div class="guidelines-grid">
+                <div class="guideline-item">
+                    <div class="guideline-icon">🤝</div>
+                    <h4 class="guideline-title">Be Respectful</h4>
+                    <p class="guideline-description">
+                        Treat all community members with respect and professionalism. 
+                        We're here to learn and help each other grow.
+                    </p>
+                </div>
+
+                <div class="guideline-item">
+                    <div class="guideline-icon">🔒</div>
+                    <h4 class="guideline-title">Responsible Disclosure</h4>
+                    <p class="guideline-description">
+                        Never share active vulnerabilities or sensitive information publicly. 
+                        Follow responsible disclosure practices at all times.
+                    </p>
+                </div>
+
+                <div class="guideline-item">
+                    <div class="guideline-icon">📚</div>
+                    <h4 class="guideline-title">Share Knowledge</h4>
+                    <p class="guideline-description">
+                        Share your experiences, write-ups, and insights with the community. 
+                        Help others learn from your successes and failures.
+                    </p>
+                </div>
+
+                <div class="guideline-item">
+                    <div class="guideline-icon">🎯</div>
+                    <h4 class="guideline-title">Stay Ethical</h4>
+                    <p class="guideline-description">
+                        Always operate within legal and ethical boundaries. 
+                        Report vulnerabilities through proper channels only.
+                    </p>
+                </div>
+
+                <div class="guideline-item">
+                    <div class="guideline-icon">💡</div>
+                    <h4 class="guideline-title">Be Constructive</h4>
+                    <p class="guideline-description">
+                        Provide constructive feedback and helpful suggestions. 
+                        Avoid negativity and focus on positive contributions.
+                    </p>
+                </div>
+
+                <div class="guideline-item">
+                    <div class="guideline-icon">🌍</div>
+                    <h4 class="guideline-title">Embrace Diversity</h4>
+                    <p class="guideline-description">
+                        Welcome researchers from all backgrounds and skill levels. 
+                        Diversity makes our community stronger and more innovative.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Success Stories -->
+        <section class="success-stories">
+            <h3 class="stories-title">Community Success Stories</h3>
+            <div class="stories-grid">
+                <div class="story-card">
+                    <div class="story-header">
+                        <div class="story-avatar">🥷</div>
+                        <div class="story-info">
+                            <h4>@CyberNinja</h4>
+                            <div class="story-platform">Discord Community</div>
+                        </div>
+                    </div>
+                    <p class="story-content">
+                        "Joined the community as a complete beginner and got help from experienced hunters. 
+                        Within 6 months, I earned my first $5,000 bounty and now mentor newcomers myself."
+                    </p>
+                    <div class="story-bounty">$5K+ First Bounty</div>
+                </div>
+
+                <div class="story-card">
+                    <div class="story-header">
+                        <div class="story-avatar">🔥</div>
+                        <div class="story-info">
+                            <h4>@BugHunterPro</h4>
+                            <div class="story-platform">Twitter Network</div>
+                        </div>
+                    </div>
+                    <p class="story-content">
+                        "Connected with other hunters through Twitter and collaborated on a difficult target. 
+                        The teamwork approach helped us find a critical RCE worth $25,000."
+                    </p>
+                    <div class="story-bounty">$25K Collaboration</div>
+                </div>
+
+                <div class="story-card">
+                    <div class="story-header">
+                        <div class="story-avatar">🎯</div>
+                        <div class="story-info">
+                            <h4>@SecurityResearcher</h4>
+                            <div class="story-platform">GitHub Projects</div>
+                        </div>
+                    </div>
+                    <p class="story-content">
+                        "Contributed to an open-source security tool on GitHub. The project gained popularity 
+                        and I received job offers from three different security companies."
+                    </p>
+                    <div class="story-bounty">Career Opportunity</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Join Community -->
+        <section class="join-section">
+            <h2 class="join-title">Ready to Join Our Community?</h2>
+            <p class="join-description">
+                Take the next step in your bug bounty journey by connecting with thousands of security researchers worldwide. 
+                Share knowledge, collaborate on projects, and grow together in a supportive environment.
+            </p>
+            <div class="join-buttons">
+                <a href="https://discord.gg/infosec" class="join-btn" target="_blank">Join Discord</a>
+                <a href="https://reddit.com/r/bugbounty" class="join-btn secondary" target="_blank">Browse Reddit</a>
+                <a href="getting-started.html" class="join-btn secondary">Start Learning</a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer style="background: var(--cyber-darker); border-top: 2px solid var(--cyber-cyan); padding: 40px 20px; text-align: center;">
+        <div style="max-width: 1200px; margin: 0 auto;">
+            <p style="color: var(--cyber-light-gray); font-size: 0.9rem;">
+                © 2024 Bug Bounty Hunter Guide. Empowering ethical hackers worldwide.
+            </p>
+            <p style="color: var(--cyber-cyan); font-size: 0.8rem; margin-top: 10px;">
+                Always practice responsible disclosure and follow program guidelines.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Platform guide functions
+        function showDiscordGuide() {
+            alert('Discord Community Guide:\n\n1. Create Discord account\n2. Join InfoSec Focus server\n3. Introduce yourself in #introductions\n4. Read community rules\n5. Participate in discussions\n6. Ask questions in #help channels\n7. Share your findings and experiences');
+        }
+
+        function showTwitterGuide() {
+            alert('Twitter Community Guide:\n\n1. Create Twitter account\n2. Follow @Hacker0x01, @Bugcrowd\n3. Follow top hunters: @NahamSec, @stokfredrik\n4. Use hashtags: #bugbounty, #infosec\n5. Share your write-ups and findings\n6. Engage with community discussions\n7. Participate in Twitter spaces');
+        }
+
+        function showRedditGuide() {
+            alert('Reddit Community Guide:\n\n1. Create Reddit account\n2. Join r/bugbounty, r/netsec\n3. Read subreddit rules carefully\n4. Browse top posts for learning\n5. Ask questions in weekly threads\n6. Share responsible write-ups\n7. Participate in community events');
+        }
+
+        function showGitHubGuide() {
+            alert('GitHub Community Guide:\n\n1. Create GitHub account\n2. Follow ProjectDiscovery\n3. Star useful repositories\n4. Contribute to open-source tools\n5. Share your own tools/scripts\n6. Report issues and suggestions\n7. Participate in discussions');
+        }
+
+        function showYouTubeGuide() {
+            alert('YouTube Community Guide:\n\n1. Subscribe to LiveOverflow\n2. Follow NahamSec, John Hammond\n3. Watch conference talks (DEF CON, Black Hat)\n4. Learn from tutorial channels\n5. Participate in live streams\n6. Share educational content\n7. Create your own content');
+        }
+
+        function showForumGuide() {
+            alert('Forum Community Guide:\n\n1. Register on Bugcrowd Forum\n2. Complete your profile\n3. Read forum guidelines\n4. Search before asking questions\n5. Share detailed write-ups\n6. Help other community members\n7. Build your reputation');
+        }
+
+        // Initialize page animations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate cards on scroll
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            // Apply animation to cards
+            const cards = document.querySelectorAll('.platform-card, .feature-card, .guideline-item, .story-card');
+            cards.forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                card.style.transition = 'all 0.6s ease';
+                observer.observe(card);
+            });
+        });
+    </script>
+</body>
+</html>
